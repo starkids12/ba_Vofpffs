@@ -1,0 +1,68 @@
+﻿@page
+@model ba_Vofpffs.Pages.FileEntryDBListModel
+
+@{
+    ViewData["Title"] = "FileEntryDBList";
+}
+
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+        word-break: break-all;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        width: 50px;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<table class="table">
+    <thead>
+        <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FileEntryItem[0].Hash)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FileEntryItem[0].File)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FileEntryItem[0].IPAddress)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FileEntryItem[0].Headers)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FileEntryItem[0].DateTime)
+                </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.FileEntryItem) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Hash)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.File)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IPAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Headers.Length)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateTime)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
