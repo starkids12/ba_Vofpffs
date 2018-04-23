@@ -27,14 +27,6 @@ namespace ba_Vofpffs
         {
             services.AddDbContext<FileEntryContext> (options => options.UseSqlServer (Configuration.GetConnectionString ("DefaultConnection")));
 
-            //services.AddCors (options => options.AddPolicy ("AllowAll", 
-            //    builder => {
-            //        builder.AllowAnyHeader ()
-            //        .AllowAnyMethod ()
-            //        .AllowAnyOrigin ()
-            //        .AllowCredentials ();
-            //    }));
-
             services.AddMvc();
         }
 
@@ -46,7 +38,6 @@ namespace ba_Vofpffs
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseCors ("AllowAll");
             app.UseMvc();
             app.UseStaticFiles ();
         }
