@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using ba_Vofpffs.Models;
 
 namespace ba_Vofpffs
 {
@@ -23,6 +25,16 @@ namespace ba_Vofpffs
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<FileEntryContext> (options => options.UseSqlServer (Configuration.GetConnectionString ("DefaultConnection")));
+
+            //services.AddCors (options => options.AddPolicy ("AllowAll", 
+            //    builder => {
+            //        builder.AllowAnyHeader ()
+            //        .AllowAnyMethod ()
+            //        .AllowAnyOrigin ()
+            //        .AllowCredentials ();
+            //    }));
+
             services.AddMvc();
         }
 
@@ -34,7 +46,9 @@ namespace ba_Vofpffs
                 app.UseDeveloperExceptionPage();
             }
 
+            //app.UseCors ("AllowAll");
             app.UseMvc();
+            app.UseStaticFiles ();
         }
     }
 }
