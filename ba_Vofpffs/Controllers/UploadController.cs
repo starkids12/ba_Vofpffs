@@ -8,11 +8,11 @@ using ba_Vofpffs.Models;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-using Microsoft.AspNetCore.Cors;
+using Newtonsoft.Json;
 
 namespace ba_Vofpffs.Controllers
 {
-    [Route("api/[controller]")]
+
     public class UploadController : Controller
     {
         private readonly FileEntryContext _context;
@@ -24,41 +24,44 @@ namespace ba_Vofpffs.Controllers
             _logger = logger;
             _context = context;
 
-            if(_context.FileEntryItems.Count () == 0)
+            if (_context.FileEntryItems.Count() == 0)
             {
-                _logger.LogWarning ("DbSet is empty", test);
+                _logger.LogWarning("DbSet is empty", test);
             }
         }
-    
+
         // GET api/upload
         [HttpGet]
+        [Route("api/upload")]
         public JsonResult Get()
         {
-            return Json(_context.FileEntryItems.ToList ());
+            return Json(_context.FileEntryItems.ToList());
         }
 
         // POST api/upload
         [HttpPost]
+        [Route("api/upload")]
         public void Post()
         {
-            string headers = string.Join (";", Request.Headers.Select (x => String.Format ("{0}={1}", x.Key, x.Value)).ToArray ());
+            string headers = string.Join(";", Request.Headers.Select(x => String.Format("{0}={1}", x.Key, x.Value)).ToArray());
 
-            string ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString ();
+            string ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
 
             var files = Request.Form.Files;
-            List<FileEntryItem> fileEntrys = new List<FileEntryItem> ();
+            List<FileEntryItem> fileEntrys = new List<FileEntryItem>();
 
-            foreach(var file in files)
+            foreach (var file in files)
             {
                 byte[] fileArray = new byte[file.Length];
 
-                using(var memoryStream = new MemoryStream ())
+                using (var memoryStream = new MemoryStream())
                 {
-                    file.CopyTo (memoryStream);
-                    fileArray = memoryStream.ToArray ();
+                    file.CopyTo(memoryStream);
+                    fileArray = memoryStream.ToArray();
                 }
 
-                fileEntrys.Add (new FileEntryItem {
+                fileEntrys.Add(new FileEntryItem
+                {
                     Hash = file.FileName,
                     File = null,
                     Size = fileArray.Length,
@@ -70,19 +73,21 @@ namespace ba_Vofpffs.Controllers
 
             if (fileEntrys.Count != 0)
             {
-                _context.FileEntryItems.AddRange (fileEntrys);
-                _context.SaveChanges ();
+                _context.FileEntryItems.AddRange(fileEntrys);
+                _context.SaveChanges();
             }
         }
 
         // PUT api/upload/5
-        [HttpPut ("{id}")]
+        [HttpPut("{id}")]
+        [Route("api/upload")]
         public void Put(int id, [FromBody]string value)
         {
         }
 
         // DELETE api/upload/5
-        [HttpDelete ("{id}")]
+        [HttpDelete("{id}")]
+        [Route("api/upload")]
         public void Delete(int id)
         {
         }
