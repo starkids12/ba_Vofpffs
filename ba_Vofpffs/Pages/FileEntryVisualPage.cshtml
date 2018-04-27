@@ -45,15 +45,6 @@
 
 <script>
 
-    var test = [{ "id": 1, "hash": "DiscordSetup.exe", "file": null, "size": 52553728, "ipAddress": "::1", "headers": "Cache-Control=no-cache;Connection=Keep-Alive;Content-Type=multipart/form-data; boundary=--------------------------885966844847005459053046;Accept=*/*;Accept-Encoding=gzip, deflate;Host=localhost:53997;User-Agent=PostmanRuntime/7.1.1;Content-Length=52553955;Postman-Token=24177475-cc46-4701-b001-92352615af6c;MS-ASPNETCORE-TOKEN=7ea62999-2a09-4aee-8217-2c1d90d169a2;X-Original-Proto=http;X-Original-For=127.0.0.1:52522", "dateTime": "2018-04-25T09:48:43.3908183" }
-        , { "id": 2, "hash": "FACEITInstaller_64.exe", "file": null, "size": 64619112, "ipAddress": " 2a02:8108:4a40:1018:925:a3c4:b663:7bae ", "headers": "Cache-Control=no-cache;Connection=Keep-Alive;Content-Type=multipart/form-data; boundary=--------------------------110467597745309109882910;Accept=*/*;Accept-Encoding=gzip, deflate;Host=localhost:53997;User-Agent=PostmanRuntime/7.1.1;Content-Length=265772390;Postman-Token=434031f0-3b76-43c0-b337-3bbeccd1dbee;MS-ASPNETCORE-TOKEN=7ea62999-2a09-4aee-8217-2c1d90d169a2;X-Original-Proto=http;X-Original-For=127.0.0.1:52522", "dateTime": "2018-04-25T09:49:24.2253017" }
-        , { "id": 3, "hash": "GitHubDesktopSetup.exe", "file": null, "size": 80626648, "ipAddress": " 2a02:8108:4a40:1018:925:a3c4:b663:7bae ", "headers": "Cache-Control=no-cache;Connection=Keep-Alive;Content-Type=multipart/form-data; boundary=--------------------------110467597745309109882910;Accept=*/*;Accept-Encoding=gzip, deflate;Host=localhost:53997;User-Agent=PostmanRuntime/7.1.1;Content-Length=265772390;Postman-Token=434031f0-3b76-43c0-b337-3bbeccd1dbee;MS-ASPNETCORE-TOKEN=7ea62999-2a09-4aee-8217-2c1d90d169a2;X-Original-Proto=http;X-Original-For=127.0.0.1:52522", "dateTime": "2018-04-25T09:49:24.3768511" }
-        , { "id": 4, "hash": "SteamSetup.exe", "file": null, "size": 1446792, "ipAddress": " 2a02:8108:4a40:1018:925:a3c4:b663:7bae ", "headers": "Cache-Control=no-cache;Connection=Keep-Alive;Content-Type=multipart/form-data; boundary=--------------------------110467597745309109882910;Accept=*/*;Accept-Encoding=gzip, deflate;Host=localhost:53997;User-Agent=PostmanRuntime/7.1.1;Content-Length=265772390;Postman-Token=434031f0-3b76-43c0-b337-3bbeccd1dbee;MS-ASPNETCORE-TOKEN=7ea62999-2a09-4aee-8217-2c1d90d169a2;X-Original-Proto=http;X-Original-For=127.0.0.1:52522", "dateTime": "2018-04-25T09:49:24.4182112" }
-        , { "id": 5, "hash": "TeamViewer_Setup.exe", "file": null, "size": 14725904, "ipAddress": " 2a02:8108:4a40:1018:925:a3c4:b663:7bae ", "headers": "Cache-Control=no-cache;Connection=Keep-Alive;Content-Type=multipart/form-data; boundary=--------------------------110467597745309109882910;Accept=*/*;Accept-Encoding=gzip, deflate;Host=localhost:53997;User-Agent=PostmanRuntime/7.1.1;Content-Length=265772390;Postman-Token=434031f0-3b76-43c0-b337-3bbeccd1dbee;MS-ASPNETCORE-TOKEN=7ea62999-2a09-4aee-8217-2c1d90d169a2;X-Original-Proto=http;X-Original-For=127.0.0.1:52522", "dateTime": "2018-04-25T09:49:24.4452385" }
-        , { "id": 6, "hash": "vs_Community.exe", "file": null, "size": 1037592, "ipAddress": "::1", "headers": "Cache-Control=no-cache;Connection=Keep-Alive;Content-Type=multipart/form-data; boundary=--------------------------110467597745309109882910;Accept=*/*;Accept-Encoding=gzip, deflate;Host=localhost:53997;User-Agent=PostmanRuntime/7.1.1;Content-Length=265772390;Postman-Token=434031f0-3b76-43c0-b337-3bbeccd1dbee;MS-ASPNETCORE-TOKEN=7ea62999-2a09-4aee-8217-2c1d90d169a2;X-Original-Proto=http;X-Original-For=127.0.0.1:52522", "dateTime": "2018-04-25T09:49:24.4478532" }
-        , { "id": 7, "hash": "VSCodeSetup-x64-1.22.2.exe", "file": null, "size": 45426904, "ipAddress": "::1", "headers": "Cache-Control=no-cache;Connection=Keep-Alive;Content-Type=multipart/form-data; boundary=--------------------------110467597745309109882910;Accept=*/*;Accept-Encoding=gzip, deflate;Host=localhost:53997;User-Agent=PostmanRuntime/7.1.1;Content-Length=265772390;Postman-Token=434031f0-3b76-43c0-b337-3bbeccd1dbee;MS-ASPNETCORE-TOKEN=7ea62999-2a09-4aee-8217-2c1d90d169a2;X-Original-Proto=http;X-Original-For=127.0.0.1:52522", "dateTime": "2018-04-25T09:49:24.5323673" }
-        , { "id": 8, "hash": "Wireshark-win64-2.4.3.exe", "file": null, "size": 57888152, "ipAddress": "::1", "headers": "Cache-Control=no-cache;Connection=Keep-Alive;Content-Type=multipart/form-data; boundary=--------------------------110467597745309109882910;Accept=*/*;Accept-Encoding=gzip, deflate;Host=localhost:53997;User-Agent=PostmanRuntime/7.1.1;Content-Length=265772390;Postman-Token=434031f0-3b76-43c0-b337-3bbeccd1dbee;MS-ASPNETCORE-TOKEN=7ea62999-2a09-4aee-8217-2c1d90d169a2;X-Original-Proto=http;X-Original-For=127.0.0.1:52522", "dateTime": "2018-04-25T09:49:24.6334846" }]
-
     $(document).ready(function () {
         renderChart();
     });
@@ -64,41 +55,6 @@
         console.log("resize");
     });
 
-    //renderChart();
-    
-
-
-
-
-    //svg.attr("width", x * (4 / 6));
-    //svg.attr("height", y);
-
-
-
-    //d3.json("api/upload", function (error, data) {
-
-    //    console.log(data);
-
-    //    var stratify = d3.stratify()
-    //        .parentId(function (d) { return d.ipAddress.substring(0, d.ipAddress.lastIndexOf(".")); });
-
-    //    var pack = d3.pack()
-    //        .size([width - 2, height - 2])
-    //        .padding(3);
-
-    //    var nested = d3.nest()
-    //        .key(function (d) { return d.ipAddress; })
-    //        .entries(data);
-
-    //    var root = stratify(nested)
-    //        .sum(function (d) { return d.value; })
-    //        .sort(function (a, b) { return b.value - a.value; });
-
-    //    console.log(root);
-
-
-    //});
-
     function renderChart() {
 
         d3.json("api/upload", function (error, classes) {
@@ -106,14 +62,6 @@
                 throw error;
             else
                 console.log(classes);
-
-            //var w = window,
-            //    d = document,
-            //    e = d.documentElement,
-            //    g = d.getElementsByTagName('body')[0],
-            //    x = w.innerWidth || e.clientWidth || g.clientWidth,
-            //    y = w.innerHeight || e.clientHeight || g.clientHeight;
-
 
             // ugly Code 
             var svgDiv = document.getElementById("FileEntryChart");
@@ -127,9 +75,6 @@
 
             svg.attr("width", width).attr("height", height);
 
-            console.log(width);
-            console.log(height);
-
             // ->
             var color = d3.scaleOrdinal(d3.schemeCategory20c);
 
@@ -137,55 +82,7 @@
                 .domain([d3.min(classes, function (d) { return d.size; }), d3.max(classes, function (d) { return d.size; })])
                 .range([10, 100]);
 
-            //var simulation = d3.forceSimulation()
-            //    .force("x", d3.forceX(width / 2).strength(0.1))
-            //    .force("y", d3.forceY(height / 2).strength(0.1))
-            //    .force("collide", d3.forceCollide(function (d) { return radiusScale(d.size) + 1; }));
 
-
-            // Circle
-
-            //var format = d3.format(",d");
-
-            //var root = { key: "root", children: classes };
-
-            //var test = d3.hierarchy(root)
-            //    .eachBefore(function (d) { d.data.id = d.data.id; })
-            //    .sum(function (d) { return radiusScale(d.size); })
-            //    .sort(function (a, b) { return b.size - a.size; });
-
-            //var pack = d3.pack()
-            //    .size([width, height])
-            //    .padding(3);
-
-            //pack(test);
-
-            //console.log(test.descendants());
-
-            //var nodes = svg.selectAll("g")
-            //    .data(test.descendants())
-            //    .enter()
-            //    .append("g")
-            //    .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
-            //    .attr("class", function (d) { return "node" + (!d.children ? " node--leaf" : d.depth ? "" : " node--root"); })
-            //    .each(function (d) { d.node = this; });
-
-            //nodes.append("circle")
-            //    .attr("id", function (d) { return "node " + d.data.id })
-            //    .attr("r", function (d) { return d.value; })
-            //    .attr("fill", function (d) { return color(d.data.ipAddress); });
-
-            //var leafes = nodes.filter(function (d) { return !d.children; });
-
-            //leafes.append("clipPath")
-            //    .attr("id", function (d) { return "clip-" + d.data.id; })
-            //    .append("use")
-            //    .attr("xlink:href", function (d) { return "#node-" + d.data.id + ""; });
-
-            //TreemAp
-
-
-            // nest the Data for ipAddress
             var nested = d3.nest()
                 .key(function (d) { return d.ipAddress; })
                 .entries(classes);
@@ -213,6 +110,7 @@
                 .paddingTop(20);
 
             treemap(test);
+            console.log(test.descendants());
 
             // Appending all Tree Descenmdants to the svg
             var cell = svg.selectAll(".node")
@@ -240,6 +138,9 @@
             var leafes = cell.filter(function (d) { return !d.children; })
             var tree = cell.filter(function (d) { return d.children; })
 
+            // set OnClick for leafes 
+            leafes.on("click", function (d) { console.log(d.data); })
+
             // Info for leafes : actuall Files
             leafes.append("title")
                 .text(function (d) {
@@ -249,108 +150,30 @@
                         "DateTime : " + d.data.dateTime;
                 });
 
+            leafes.append("text")
+                .attr("dx", 0)
+                .attr("dy", 16)
+                .style("font-size", "16px")
+                .text(function (d) {
+                    return "Hash: " + d.data.hash;
+                });
+
+            leafes.append("text")
+                .attr("dx", 0)
+                .attr("dy", 28)
+                .style("font-size", "12px")
+                .text(function (d) {
+                    return "Byte: " + d.data.size;
+                });
+
             // Info for the Tree : nested Property
             tree.append("text")
-                .attr("dx", function (d) { return d.x0; })
-                .attr("dy", function (d) { return d.y0; })
+                .attr("dx", function (d) { return 0 ; })
+                .attr("dy", function (d) { return 15 ; })
                 .text(function (d) {
                     return "Key: " + d.data.key;
                 });
         });
-
     };
-    //d3.json("api/upload", function (error, classes) {
-    //    if (error)
-    //        throw error;
-    //    else
-    //        console.log(classes);
-
-    //    var color = d3.scaleOrdinal(d3.schemeCategory20c);
-
-    //    var radiusScale = d3.scaleSqrt()
-    //        .domain([d3.min(classes, function (d) { return d.size; }), d3.max(classes, function (d) { return d.size; })])
-    //        .range([10, 100]);
-
-    //    var simulation = d3.forceSimulation()
-    //        .force("x", d3.forceX(width / 2).strength(0.1))
-    //        .force("y", d3.forceY(height / 2).strength(0.1))
-    //        .force("collide", d3.forceCollide(function (d) { return radiusScale(d.size) + 1; }));
-
-    //    var nodes = svg.selectAll("g")
-    //        .data(classes)
-    //        .enter()
-    //        .append("circle")
-    //        .attr("class", "circle")
-    //        .attr("r", function (d) { return radiusScale(d.size); })
-    //        .attr("id", function (d) { return d.id; })
-    //        .attr("fill", function (d) { return color(d.ipAddress); });
-
-    //    nodes.append("title")
-    //        .text(function (d) {
-    //            return "Name : " + d.hash + "\n" +
-    //                "Size : " + d.size + "Byte" + "\n" +
-    //                "IPAddres : " + d.ipAddress + "\n" +
-    //                "DateTime : " + d.dateTime;
-    //        });
-
-    //    simulation.nodes(classes).on("tick", ticked);
-
-    //    function ticked() {
-    //        nodes
-    //            .attr("cx", function (d) { return d.x; })
-    //            .attr("cy", function (d) { return d.y; })
-    //    };
-    //});
-
-
-    //d3.json("api/upload", function (error, classes) {
-    //    if (error) throw error;
-
-    //    var nestedIPs = d3.nest()
-    //        .key(function (d) { return d.ipAddress; })
-    //        .rollup(function (d) { return d.length; })
-    //        .entries(classes);
-
-    //    nestedIPs.unshift({
-    //        "key": "ALL", "value": d3.sum(nestedIPs, function (d) { return d.value; })
-    //    });
-
-    //    var selector = d3.select("#selector");
-
-    //    selector.selectAll("option")
-    //        .data(nestedIPs)
-    //        .enter()
-    //        .append("option")
-    //        .text(function (d) { return d.key + "-> File Count : " + d.value; })
-    //        .attr("value", function (d) { return d.key; });
-
-    //    selector.on("change", function () {
-    //        d3.selectAll("g")
-    //            .attr("opacity", 1.0);
-
-    //        var value = selector.property("value");
-
-    //        if (value != "ALL") {
-
-    //            d3.selectAll("g")
-    //                .filter(function (d) { return d.ipAddress != value; })
-    //                .attr("opacity", 0.1);
-    //        }
-
-    //    });
-
-    //    var nodes = svg.selectAll("g")
-    //        .data(classes)
-    //        .enter()
-    //        .append("g")
-    //        .attr("class", function (d) { return d.ipAddress; })
-    //        .attr("transform", function (d) { return "translate(10, 10)"; })
-    //        .attr("r", function (d) { return d.size / 1024; })
-    //        .style("fill", "blue");
-
-    //    nodes.append("circle")
-    //        .attr("id", function (d) { return d.id; })
-    //        .attr("r", function (d) { return d.size / 1024; })
-    //        .style("fill", "red");
-    //});
+   
 </script>
