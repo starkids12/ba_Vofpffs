@@ -13,7 +13,7 @@
 <style>
     .grid-container {
         display: grid;
-        grid-template-columns: 60% 40%;
+        grid-template-columns: 70% 30%;
         grid-auto-rows: 1fr;
         height: 100%;
         width: 100%;
@@ -29,6 +29,34 @@
         height: inherit;
         width: inherit;
     }
+
+    p {
+        padding: 10px;
+    }
+
+    .collapsible {
+        background-color: #777;
+        color: white;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+    }
+
+        .active, .collapsible:hover {
+            background-color: #555;
+        }
+
+    .content {
+        padding: 0 18px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+        background-color: #f1f1f1;
+    }
 </style>
 
 <div class="grid-container" onload="renderChart()">
@@ -38,6 +66,14 @@
     @*<svg id="FileEntryChart" class="grid-item svg"></svg>*@
 
     <div id="FileEntryInspector" class="grid-item">
+        <p id="idParagraph">Id :</p>
+        <p id="hashParagraph">Hash : </p>
+        <p id="sizeParagraph">Size : </p>
+        <p id="ipParagraph">IpAddress : </p>
+        <p id="dateParagraph">Date :</p>
+        <p id="HeaderParagrap">Header : </p>
+
+        <ul id="HeaderList"></ul>
 
     </div>
 </div>
@@ -45,12 +81,27 @@
 
 <script>
 
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    }
+
     $(document).ready(function () {
         renderChart();
     });
 
     $(window).resize(function () {
-        
+
         renderChart();
         console.log("resize");
     });
@@ -63,7 +114,7 @@
             else
                 console.log(classes);
 
-            // ugly Code 
+            // ugly Code
             var svgDiv = document.getElementById("FileEntryChart");
             while (svgDiv.firstChild) {
                 svgDiv.removeChild(svgDiv.firstChild);
@@ -90,7 +141,7 @@
             // create a root Node for the Tree Structure
             var root = { key: "rootNode", children: [] };
 
-            // create Parent Elements for each Nested Attribute 
+            // create Parent Elements for each Nested Attribute
             nested.forEach(function (element) {
 
                 root.children.push({ key: element.key, children: element.values });
@@ -138,8 +189,8 @@
             var leafes = cell.filter(function (d) { return !d.children; })
             var tree = cell.filter(function (d) { return d.children; })
 
-            // set OnClick for leafes 
-            leafes.on("click", function (d) { console.log(d.data); })
+            // set OnClick for leafes
+            leafes.on("click", function (d) { setIncpector(d.data); })
 
             // Info for leafes : actuall Files
             leafes.append("title")
@@ -163,17 +214,57 @@
                 .attr("dy", 28)
                 .style("font-size", "12px")
                 .text(function (d) {
-                    return "Byte: " + d.data.size;
+                    return "Size : " + d.data.size + " Byte";
                 });
 
             // Info for the Tree : nested Property
             tree.append("text")
-                .attr("dx", function (d) { return 0 ; })
-                .attr("dy", function (d) { return 15 ; })
+                .attr("dx", function (d) { return 0; })
+                .attr("dy", function (d) { return 15; })
                 .text(function (d) {
                     return "Key: " + d.data.key;
                 });
         });
     };
-   
+
+    function resetHeaderList() {
+        var headerl = document.getElementById("HeaderList");
+
+        while (headerl.firstChild) {
+            headerl.removeChild(headerl.firstChild);
+        }
+    };
+
+    function setIncpector(data) {
+
+        resetHeaderList();
+
+        var idp = document.getElementById("idParagraph");
+        var hashp = document.getElementById("hashParagraph");
+        var sizep = document.getElementById("sizeParagraph");
+        var ipp = document.getElementById("ipParagraph");
+        var datep = document.getElementById("dateParagraph");
+        var headerl = document.getElementById("HeaderList");
+
+        idp.innerText = "Id : " + data.id;
+        hashp.innerText = "Hash : " + data.hash;
+        sizep.innerText = "Size : " + data.size + " Byte";
+        ipp.innerText = "IpAddress : " + data.ipAddress;
+        datep.innerText = "Date : " + data.dateTime;
+
+        var hvPair = data.headers.split(";");
+        hvPair.forEach(function (element) {
+
+            var text = element.replace("=", " = ");
+
+            var entry = document.createElement('li');
+            entry.appendChild(document.createTextNode(text));
+
+            headerl.appendChild(entry);
+        });
+
+
+
+    }
+
 </script>
