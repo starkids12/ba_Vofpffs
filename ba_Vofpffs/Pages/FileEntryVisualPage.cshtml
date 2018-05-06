@@ -13,10 +13,10 @@
 <style>
     .grid-container {
         display: grid;
-        grid-template-columns: 70% 30%;
+        grid-template-columns: 25vw auto;
         grid-auto-rows: 1fr;
-        height: 100%;
-        width: 100%;
+        height: 100vh;
+        width: 100vw;
     }
 
     .grid-item {
@@ -57,53 +57,64 @@
         transition: max-height 0.2s ease-out;
         background-color: #f1f1f1;
     }
+
+    .label {
+        text-anchor: middle;
+        text-overflow: ellipsis;
+        font-size: 16px;
+    }
+
+    .wrapper {
+        display: flex;
+        align-items: stretch;
+        height: 100%;
+        width: 100%;
+    }
+
+    .sidebar {
+        width: 25vw;
+        height: 100%;
+        text-overflow: ellipsis;
+        visibility: visible;
+    }
 </style>
 
 <div class="grid-container" onload="renderChart()">
+
+    <nav id="sidebar" class="sidebar">
+        <div id="FileEntryInspector" class="grid-item">
+            <p id="idParagraph">Id :</p>
+            <p id="hashParagraph">Hash : </p>
+            <p id="sizeParagraph">Size : </p>
+            <p id="ipParagraph">IpAddress : </p>
+            <p id="dateParagraph">Date :</p>
+            <p id="HeaderParagrap">Header : </p>
+
+            <ul id="HeaderList"></ul>
+
+        </div>
+
+        @*<button id="SideBarToggleButton">Test1234</button>*@
+    </nav>
+
+
+
     <div id="FileEntryChart" class="grid-item">
 
     </div>
-    @*<svg id="FileEntryChart" class="grid-item svg"></svg>*@
 
-    <div id="FileEntryInspector" class="grid-item">
-        <p id="idParagraph">Id :</p>
-        <p id="hashParagraph">Hash : </p>
-        <p id="sizeParagraph">Size : </p>
-        <p id="ipParagraph">IpAddress : </p>
-        <p id="dateParagraph">Date :</p>
-        <p id="HeaderParagrap">Header : </p>
-
-        <ul id="HeaderList"></ul>
-
-    </div>
 </div>
 
 
 <script>
-
-    var coll = document.getElementsByClassName("collapsible");
-    var i;
-
-    for (i = 0; i < coll.length; i++) {
-        coll[i].addEventListener("click", function () {
-            this.classList.toggle("active");
-            var content = this.nextElementSibling;
-            if (content.style.maxHeight) {
-                content.style.maxHeight = null;
-            } else {
-                content.style.maxHeight = content.scrollHeight + "px";
-            }
-        });
-    }
-
     $(document).ready(function () {
+
         renderChart();
     });
 
     $(window).resize(function () {
 
         renderChart();
-        console.log("resize");
     });
 
     function renderChart() {
@@ -124,10 +135,13 @@
             var width = svgDiv.clientWidth;
             var height = svgDiv.clientHeight;
 
+            // transition tim ein ms
+            var transitionDuration = 500;
+
             svg.attr("width", width).attr("height", height);
 
             // ->
-            var color = d3.scaleOrdinal(d3.schemeCategory20c);
+            var color = d3.scaleOrdinal(d3.schemeCategory10);
 
             var radiusScale = d3.scaleSqrt()
                 .domain([d3.min(classes, function (d) { return d.size; }), d3.max(classes, function (d) { return d.size; })])
@@ -175,8 +189,8 @@
             // Appending rectangles for all Tree Members
             cell.append("rect")
                 .attr("id", function (d) { return d.data.id; })
-                .attr("width", function (d) { return d.x1 - d.x0; })
-                .attr("height", function (d) { return d.y1 - d.y0; })
+                .attr("width", function (d) { return (d.x1 - d.x0); })
+                .attr("height", function (d) { return (d.y1 - d.y0); })
                 .attr("fill", function (d) {
 
                     if (d.parent)
@@ -184,6 +198,7 @@
                     else
                         return color("root");
                 });
+
 
             // Differ leafes vs tree in Visualization
             var leafes = cell.filter(function (d) { return !d.children; })
@@ -202,20 +217,31 @@
                 });
 
             leafes.append("text")
-                .attr("dx", 0)
-                .attr("dy", 16)
-                .style("font-size", "16px")
+                .attr("x", function (d) { return (d.x1 - d.x0) / 2; })
+                .attr("y", function (d) { return (d.y1 - d.y0) / 2; })
+                .attr("class", "label")
                 .text(function (d) {
-                    return "Hash: " + d.data.hash;
+                    var t = "Name: " + d.data.hash;
+
+                    if (getTextWidth(t, "bold 12pt arial") > (d.x1 - d.x0))
+                        return "X";
+                    else
+                        return t;
                 });
 
             leafes.append("text")
-                .attr("dx", 0)
-                .attr("dy", 28)
-                .style("font-size", "12px")
+                .attr("x", function (d) { return (d.x1 - d.x0) / 2; })
+                .attr("y", function (d) { return ((d.y1 - d.y0) / 2) + 16; })
+                .attr("class", "label")
                 .text(function (d) {
-                    return "Size : " + d.data.size + " Byte";
+                    var t = "Size : " + (d.data.size / 1024).toFixed(2) + " KB";
+
+                    if (getTextWidth(t, "bold 12pt arial") > (d.x1 - d.x0))
+                        return "";
+                    else
+                        return t;
                 });
+
 
             // Info for the Tree : nested Property
             tree.append("text")
@@ -225,6 +251,16 @@
                     return "Key: " + d.data.key;
                 });
         });
+    };
+
+    function getTextWidth(text, font) {
+        // if given, use cached canvas for better performance
+        // else, create new canvas
+        var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+        var context = canvas.getContext("2d");
+        context.font = font;
+        var metrics = context.measureText(text);
+        return metrics.width;
     };
 
     function resetHeaderList() {
