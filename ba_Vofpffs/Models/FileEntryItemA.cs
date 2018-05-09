@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace ba_Vofpffs.Models
 {
-    public class FileEntryItem
+    public class FileEntryItemA
     {
-        public FileEntryItem()
+        public FileEntryItemA()
         {
 
         }
 
-        public FileEntryItem(string hash, byte[] file, int size, string ipAddress, string headers, DateTime dateTime)
+        public FileEntryItemA(string hash, byte[] file, int size, string ipAddress, string headers, DateTime dateTime)
         {
             this.Hash = hash;
             this.File = file;

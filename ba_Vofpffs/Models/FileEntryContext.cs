@@ -10,11 +10,13 @@ namespace ba_Vofpffs.Models
     {
         public FileEntryContext(DbContextOptions<FileEntryContext> options) : base (options) { }
 
-        public DbSet<FileEntryItem> FileEntryItems { get; set; }
+        public DbSet<FileEntryItemA> FileEntryItemsA { get; set; }
+        public DbSet<FileEntryItemB> FileEntryItemsB { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<FileEntryItem> ().ToTable ("FileEntry");
+            modelBuilder.Entity<FileEntryItemA> ().ToTable ("FileEntryA");
+            modelBuilder.Entity<FileEntryItemB> ().ToTable ("FileEntryB");
         }
     }
 }

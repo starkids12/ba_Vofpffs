@@ -24,7 +24,7 @@ namespace ba_Vofpffs.Controllers
             _logger = logger;
             _context = context;
 
-            if (_context.FileEntryItems.Count() == 0)
+            if (_context.FileEntryItemsA.Count() == 0)
             {
                 _logger.LogWarning("DbSet is empty", test);
             }
@@ -35,7 +35,7 @@ namespace ba_Vofpffs.Controllers
         [Route("api/upload")]
         public JsonResult Get()
         {
-            return Json(_context.FileEntryItems.ToList());
+            return Json(_context.FileEntryItemsA.ToList());
         }
 
         // POST api/upload
@@ -48,7 +48,7 @@ namespace ba_Vofpffs.Controllers
             string ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
 
             var files = Request.Form.Files;
-            List<FileEntryItem> fileEntrys = new List<FileEntryItem>();
+            List<FileEntryItemA> fileEntrys = new List<FileEntryItemA>();
 
             foreach (var file in files)
             {
@@ -60,7 +60,7 @@ namespace ba_Vofpffs.Controllers
                     fileArray = memoryStream.ToArray();
                 }
 
-                fileEntrys.Add(new FileEntryItem
+                fileEntrys.Add(new FileEntryItemA
                 {
                     Hash = file.FileName,
                     File = null,
@@ -73,7 +73,7 @@ namespace ba_Vofpffs.Controllers
 
             if (fileEntrys.Count != 0)
             {
-                _context.FileEntryItems.AddRange(fileEntrys);
+                _context.FileEntryItemsA.AddRange(fileEntrys);
                 _context.SaveChanges();
             }
         }

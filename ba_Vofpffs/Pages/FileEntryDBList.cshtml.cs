@@ -18,11 +18,11 @@ namespace ba_Vofpffs.Pages
             _context = context;
         }
 
-        public IList<FileEntryItem> FileEntryItem { get;set; }
+        public IList<FileEntryItemA> FileEntryItem { get;set; }
 
         public async Task OnGetAsync()
         {
-            FileEntryItem = await _context.FileEntryItems.ToListAsync();
+            FileEntryItem = await _context.FileEntryItemsA.ToListAsync();
         }
     }
 }
