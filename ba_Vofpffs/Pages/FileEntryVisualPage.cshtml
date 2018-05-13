@@ -7,84 +7,21 @@
 <script src="https://d3js.org/d3.v4.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link href="~/lib/css/bootstrap.css" rel="stylesheet" />
-
-@*<select id="selector" class="custom-select"></select>*@
-
-<style>
-    .grid-container {
-        display: grid;
-        grid-template-columns: 25vw auto;
-        grid-auto-rows: 1fr;
-        height: 100vh;
-        width: 100vw;
-    }
-
-    .grid-item {
-        /*background-color: rgba(255, 255, 255, 0.8);
-        font-size: 16px;
-        text-align: center;*/
-    }
-
-    .svg {
-        height: inherit;
-        width: inherit;
-    }
-
-    p {
-        padding: 10px;
-    }
-
-    .collapsible {
-        background-color: #777;
-        color: white;
-        cursor: pointer;
-        padding: 18px;
-        width: 100%;
-        border: none;
-        text-align: left;
-        outline: none;
-        font-size: 15px;
-    }
-
-        .active, .collapsible:hover {
-            background-color: #555;
-        }
-
-    .content {
-        padding: 0 18px;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.2s ease-out;
-        background-color: #f1f1f1;
-    }
-
-    .label {
-        text-anchor: middle;
-        text-overflow: ellipsis;
-        font-size: 16px;
-    }
-
-    .wrapper {
-        display: flex;
-        align-items: stretch;
-        height: 100%;
-        width: 100%;
-    }
-
-    .sidebar {
-        width: 25vw;
-        height: 100%;
-        text-overflow: ellipsis;
-        visibility: visible;
-        overflow: auto;
-        max-height: 100vh;
-    }
-</style>
+<script src="~/lib/js/Vofpffs.js"></script>
+<link href="~/lib/css/Vofpffs.css" rel="stylesheet" />
 
 <div class="grid-container" onload="renderChart()">
 
     <nav id="sidebar" class="sidebar">
         <div id="FileEntryInspector" class="grid-item">
+            <p id="selectedDbSetParagraph">DB Set A</p>
+
+            <div>
+                <button id="buttonA" class="btn-block btn-primary" onclick="setDbSet(this.id)">A</button>
+                <button id="buttonB" class="btn-block btn-primary" onclick="setDbSet(this.id)">B</button>
+                <select id="propertySelector" class="custom-select" onchange="onSelectChange(this.value)"></select>
+            </div>
+
             <p id="idParagraph">Id :</p>
             <p id="hashParagraph">Hash : </p>
             <p id="sizeParagraph">Size : </p>
@@ -93,213 +30,10 @@
             <p id="HeaderParagrap">Header : </p>
 
             <ul id="HeaderList"></ul>
-
         </div>
-
-        @*<button id="SideBarToggleButton">Test1234</button>*@
     </nav>
-
-
 
     <div id="FileEntryChart" class="grid-item">
 
     </div>
-
 </div>
-
-
-<script>
-    $(document).ready(function () {
-
-        renderChart();
-    });
-
-    $(window).resize(function () {
-
-        renderChart();
-    });
-
-    function renderChart() {
-
-        d3.json("api/upload", function (error, classes) {
-            if (error)
-                throw error;
-            else
-                console.log(classes);
-
-            // ugly Code
-            var svgDiv = document.getElementById("FileEntryChart");
-            while (svgDiv.firstChild) {
-                svgDiv.removeChild(svgDiv.firstChild);
-            }
-            var svg = d3.select(svgDiv).append("svg");
-
-            var width = svgDiv.clientWidth;
-            var height = svgDiv.clientHeight;
-
-            // transition tim ein ms
-            var transitionDuration = 500;
-
-            svg.attr("width", width).attr("height", height);
-
-            // ->
-            var color = d3.scaleOrdinal(d3.schemeCategory10);
-
-            var radiusScale = d3.scaleSqrt()
-                .domain([d3.min(classes, function (d) { return d.size; }), d3.max(classes, function (d) { return d.size; })])
-                .range([10, 100]);
-
-
-            var nested = d3.nest()
-                .key(function (d) { return d.ipAddress; })
-                .entries(classes);
-
-            // create a root Node for the Tree Structure
-            var root = { key: "rootNode", children: [] };
-
-            // create Parent Elements for each Nested Attribute
-            nested.forEach(function (element) {
-
-                root.children.push({ key: element.key, children: element.values });
-            });
-
-            // creating the hierarchy structure for the TreeMap
-            var test = d3.hierarchy(root)
-                .eachBefore(function (d) { d.data.id = d.data.id; })
-                .sum(function (d) { return radiusScale(d.size); })
-                .sort(function (a, b) { return b.size - a.size; });
-
-            var treemap = d3.treemap()
-                .size([width, height])
-                .round(true)
-                .paddingInner(2)
-                .paddingOuter(2)
-                .paddingTop(20);
-
-            treemap(test);
-            console.log(test.descendants());
-
-            // Appending all Tree Descenmdants to the svg
-            var cell = svg.selectAll(".node")
-                .data(test.descendants())
-                .enter()
-                .append("g")
-                .attr("transform", function (d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
-                .attr("class", "node")
-                .each(function (d) { d.node = this; })
-
-            // Appending rectangles for all Tree Members
-            cell.append("rect")
-                .attr("id", function (d) { return d.data.id; })
-                .attr("width", function (d) { return (d.x1 - d.x0); })
-                .attr("height", function (d) { return (d.y1 - d.y0); })
-                .attr("fill", function (d) {
-
-                    if (d.parent)
-                        return color(d.parent.data.key);
-                    else
-                        return color("root");
-                });
-
-
-            // Differ leafes vs tree in Visualization
-            var leafes = cell.filter(function (d) { return !d.children; })
-            var tree = cell.filter(function (d) { return d.children; })
-
-            // set OnClick for leafes
-            leafes.on("click", function (d) { setIncpector(d.data); })
-
-            // Info for leafes : actuall Files
-            leafes.append("title")
-                .text(function (d) {
-                    return "Name : " + d.data.hash + "\n" +
-                        "Size : " + d.data.size + "Byte" + "\n" +
-                        "IPAddres : " + d.data.ipAddress + "\n" +
-                        "DateTime : " + d.data.dateTime;
-                });
-
-            leafes.append("text")
-                .attr("x", function (d) { return (d.x1 - d.x0) / 2; })
-                .attr("y", function (d) { return (d.y1 - d.y0) / 2; })
-                .attr("class", "label")
-                .text(function (d) {
-                    var t = "Name: " + d.data.hash;
-
-                    if (getTextWidth(t, "bold 12pt arial") > (d.x1 - d.x0))
-                        return "X";
-                    else
-                        return t;
-                });
-
-            leafes.append("text")
-                .attr("x", function (d) { return (d.x1 - d.x0) / 2; })
-                .attr("y", function (d) { return ((d.y1 - d.y0) / 2) + 16; })
-                .attr("class", "label")
-                .text(function (d) {
-                    var t = "Size : " + (d.data.size / 1024).toFixed(2) + " KB";
-
-                    if (getTextWidth(t, "bold 12pt arial") > (d.x1 - d.x0))
-                        return "";
-                    else
-                        return t;
-                });
-
-
-            // Info for the Tree : nested Property
-            tree.append("text")
-                .attr("dx", function (d) { return 0; })
-                .attr("dy", function (d) { return 15; })
-                .text(function (d) {
-                    return "Key: " + d.data.key;
-                });
-        });
-    };
-
-    function getTextWidth(text, font) {
-        // if given, use cached canvas for better performance
-        // else, create new canvas
-        var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
-        var context = canvas.getContext("2d");
-        context.font = font;
-        var metrics = context.measureText(text);
-        return metrics.width;
-    };
-
-    function resetHeaderList() {
-        var headerl = document.getElementById("HeaderList");
-
-        while (headerl.firstChild) {
-            headerl.removeChild(headerl.firstChild);
-        }
-    };
-
-    function setIncpector(data) {
-
-        resetHeaderList();
-
-        var idp = document.getElementById("idParagraph");
-        var hashp = document.getElementById("hashParagraph");
-        var sizep = document.getElementById("sizeParagraph");
-        var ipp = document.getElementById("ipParagraph");
-        var datep = document.getElementById("dateParagraph");
-        var headerl = document.getElementById("HeaderList");
-
-        idp.innerText = "Id : " + data.id;
-        hashp.innerText = "Hash : " + data.hash;
-        sizep.innerText = "Size : " + data.size + " Byte";
-        ipp.innerText = "IpAddress : " + data.ipAddress;
-        datep.innerText = "Date : " + data.dateTime;
-
-        var hvPair = data.headers.split(";");
-        hvPair.forEach(function (element) {
-
-            var text = element.replace("=", " = ");
-
-            var entry = document.createElement('li');
-            entry.appendChild(document.createTextNode(text));
-
-            headerl.appendChild(entry);
-        });
-    }
-
-</script>

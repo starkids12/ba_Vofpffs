@@ -32,18 +32,35 @@ namespace ba_Vofpffs.Controllers
 
         // GET api/upload
         [HttpGet]
-        [Route("api/upload")]
-        public JsonResult Get()
+        [Route("api/uploadA")]
+        public JsonResult GetA()
         {
             return Json(_context.FileEntryItemsA.ToList());
         }
 
+        [HttpGet]
+        [Route("api/uploadB")]
+        public JsonResult GetB()
+        {
+            return Json(_context.FileEntryItemsB.ToList());
+        }
+
         // POST api/upload
         [HttpPost]
-        [Route("api/upload")]
-        public void Post()
+        [Route("api/uploadA")]
+        public void PostA()
         {
-            string headers = string.Join(";", Request.Headers.Select(x => String.Format("{0}={1}", x.Key, x.Value)).ToArray());
+            string headers = string.Join("|", Request.Headers.Select(x => String.Format("{0}={1}", x.Key, x.Value)).ToArray());
+
+            string headerFingerprint = "";
+
+            foreach (var header in Request.Headers)
+            {
+                if (header.Key == "User-Agent" || header.Key == "Accept-Encoding" || header.Key == "Accept")
+                {
+                    headerFingerprint += String.Format("{0}={1}|", header.Key, header.Value);
+                }
+            }
 
             string ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
 
@@ -66,6 +83,7 @@ namespace ba_Vofpffs.Controllers
                     File = null,
                     Size = fileArray.Length,
                     Headers = headers,
+                    HeaderFingerprint = headerFingerprint,
                     IPAddress = ipAddress,
                     DateTime = DateTime.Now
                 });
@@ -74,6 +92,57 @@ namespace ba_Vofpffs.Controllers
             if (fileEntrys.Count != 0)
             {
                 _context.FileEntryItemsA.AddRange(fileEntrys);
+                _context.SaveChanges();
+            }
+        }
+
+        // POST api/upload
+        [HttpPost]
+        [Route("api/uploadB")]
+        public void PostB()
+        {
+            string headers = string.Join(";", Request.Headers.Select(x => String.Format("{0}={1}", x.Key, x.Value)).ToArray());
+
+            string headerFingerprint = "";
+
+            foreach(var header in Request.Headers)
+            {
+                if (header.Key == "User-Agent" || header.Key == "Accept-Encoding" || header.Key == "Accept")
+                {
+                    headerFingerprint += String.Format("{0}={1}|", header.Key, header.Value);
+                }
+            }
+
+            string ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+
+            var files = Request.Form.Files;
+            List<FileEntryItemB> fileEntrys = new List<FileEntryItemB>();
+
+            foreach (var file in files)
+            {
+                byte[] fileArray = new byte[file.Length];
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    file.CopyTo(memoryStream);
+                    fileArray = memoryStream.ToArray();
+                }
+
+                fileEntrys.Add(new FileEntryItemB
+                {
+                    Hash = file.FileName,
+                    File = null,
+                    Size = fileArray.Length,
+                    Headers = headers,
+                    HeaderFingerprint = headerFingerprint,
+                    IPAddress = ipAddress,
+                    DateTime = DateTime.Now
+                });
+            }
+
+            if (fileEntrys.Count != 0)
+            {
+                _context.FileEntryItemsB.AddRange(fileEntrys);
                 _context.SaveChanges();
             }
         }
