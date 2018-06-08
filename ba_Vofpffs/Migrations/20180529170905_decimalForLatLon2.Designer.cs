@@ -11,9 +11,10 @@ using System;
 namespace ba_Vofpffs.Migrations
 {
     [DbContext(typeof(FileEntryContext))]
-    partial class FileEntryContextModelSnapshot : ModelSnapshot
+    [Migration("20180529170905_decimalForLatLon2")]
+    partial class decimalForLatLon2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

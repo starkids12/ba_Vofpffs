@@ -11,9 +11,10 @@ using System;
 namespace ba_Vofpffs.Migrations
 {
     [DbContext(typeof(FileEntryContext))]
-    partial class FileEntryContextModelSnapshot : ModelSnapshot
+    [Migration("20180529170700_decimalForLatLon")]
+    partial class decimalForLatLon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,9 +44,9 @@ namespace ba_Vofpffs.Migrations
 
                     b.Property<string>("Isp");
 
-                    b.Property<float>("Lat");
+                    b.Property<decimal>("Lat");
 
-                    b.Property<float>("Lon");
+                    b.Property<decimal>("Lon");
 
                     b.Property<string>("RegionName");
 
@@ -79,9 +80,9 @@ namespace ba_Vofpffs.Migrations
 
                     b.Property<string>("Isp");
 
-                    b.Property<float>("Lat");
+                    b.Property<decimal>("Lat");
 
-                    b.Property<float>("Lon");
+                    b.Property<decimal>("Lon");
 
                     b.Property<string>("RegionName");
 

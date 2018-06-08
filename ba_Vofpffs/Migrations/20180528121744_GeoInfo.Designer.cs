@@ -11,9 +11,10 @@ using System;
 namespace ba_Vofpffs.Migrations
 {
     [DbContext(typeof(FileEntryContext))]
-    partial class FileEntryContextModelSnapshot : ModelSnapshot
+    [Migration("20180528121744_GeoInfo")]
+    partial class GeoInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,9 +44,9 @@ namespace ba_Vofpffs.Migrations
 
                     b.Property<string>("Isp");
 
-                    b.Property<float>("Lat");
+                    b.Property<string>("Lat");
 
-                    b.Property<float>("Lon");
+                    b.Property<string>("Lon");
 
                     b.Property<string>("RegionName");
 
@@ -79,9 +80,9 @@ namespace ba_Vofpffs.Migrations
 
                     b.Property<string>("Isp");
 
-                    b.Property<float>("Lat");
+                    b.Property<string>("Lat");
 
-                    b.Property<float>("Lon");
+                    b.Property<string>("Lon");
 
                     b.Property<string>("RegionName");
 
