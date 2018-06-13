@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace ba_Vofpffs.Models
 {
@@ -18,7 +12,7 @@ namespace ba_Vofpffs.Models
         public FileEntryItemA(string hash, byte[] file, int size, string ipAddress, string headers, string headerFingerprint, DateTime dateTime, 
             string country, string regionName, string city, string lat, string lon, string isp)
         {
-            this.Hash = hash;
+            this.Filename = hash;
             this.File = file;
             this.Size = size;
             this.IPAddress = ipAddress;
@@ -28,13 +22,22 @@ namespace ba_Vofpffs.Models
             this.Country = country;
             this.RegionName = regionName;
             this.City = city;
-            this.Lat = float.Parse (lat);
-            this.Lon = float.Parse (lon);
+
+            if(lat != null)
+                this.Lat = float.Parse (lat);
+            else
+                this.Lat = 0;
+
+            if(lon != null)
+                this.Lon = float.Parse (lon);
+            else
+                this.Lat = 0;
+
             this.Isp = isp;
         }
 
         public int ID { get; set; }
-        public string Hash { get; set; }
+        public string Filename { get; set; }
         public byte[] File { get; set; }
         public int Size { get; set; }
         public string IPAddress { get; set; }

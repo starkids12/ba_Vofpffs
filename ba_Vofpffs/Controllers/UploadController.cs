@@ -119,7 +119,7 @@ namespace ba_Vofpffs.Controllers
         {
             DateTime dateTime = DateTime.Now;
 
-            string headers = string.Join (";", Request.Headers.Select (x => String.Format ("{0}={1}", x.Key, x.Value)).ToArray ());
+            string headers = string.Join ("|", Request.Headers.Select (x => String.Format ("{0}={1}", x.Key, x.Value)).ToArray ());
 
             string headerFingerprint = "";
 
@@ -160,7 +160,7 @@ namespace ba_Vofpffs.Controllers
                         fileArray = memoryStream.ToArray ();
                     }
 
-                    fileEntrys.Add (new FileEntryItemA (file.FileName, null, fileArray.Length, headers, headerFingerprint, ipAddress, dateTime, country, regionName, city, lat, lon, isp));
+                    fileEntrys.Add (new FileEntryItemA (file.FileName, null, fileArray.Length, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
                 }
 
                 if(fileEntrys.Count != 0)
@@ -183,7 +183,7 @@ namespace ba_Vofpffs.Controllers
                         fileArray = memoryStream.ToArray ();
                     }
 
-                    fileEntrys.Add (new FileEntryItemB (file.FileName, null, fileArray.Length, headers, headerFingerprint, ipAddress, dateTime, country, regionName, city, lat, lon, isp));
+                    fileEntrys.Add (new FileEntryItemB (file.FileName, null, fileArray.Length, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
                 }
 
                 if(fileEntrys.Count != 0)

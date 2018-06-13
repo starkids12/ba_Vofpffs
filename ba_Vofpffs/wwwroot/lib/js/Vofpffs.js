@@ -4,7 +4,7 @@ var selectedProperty = "";
 var selectedVisualiation = "";
 
 var idp;
-var hashp;
+var filenamep;
 var sizep;
 var ipp;
 var datep;
@@ -18,7 +18,7 @@ function initMap() {
 $(document).ready(function () {
 
     idp = document.getElementById("idParagraph");
-    hashp = document.getElementById("hashParagraph");
+    filenamep = document.getElementById("filenameParagraph");
     sizep = document.getElementById("sizeParagraph");
     ipp = document.getElementById("ipParagraph");
     datep = document.getElementById("dateParagraph");
@@ -65,8 +65,8 @@ function renderChart() {
         else if (selectedVisualiation == "googleMap") {
             drawGoogleMap(classes);
         }
-        else if (selectedVisualiation == "headerfingerprint") {
-            drawSvgContent(classes, "headerfingerprint");
+        else if (selectedVisualiation == "headerFingerprint") {
+            drawSvgContent(classes, "headerFingerprint");
         }
     });
 };
@@ -91,8 +91,7 @@ function drawGoogleMap(classes) {
     cords.forEach(function (element) {
         var marker = new google.maps.Marker({
             position: new google.maps.LatLng(element.lat, element.lon),
-            map: map,
-            title: "test"
+            map: map
         })
     });
 
@@ -127,12 +126,16 @@ function drawSvgContent(classes, property) {
         .domain([d3.min(classes, function (d) { return d.size; }), d3.max(classes, function (d) { return d.size; })])
         .range([10, 100]);
 
+    console.log(classes);
+
     var nested = d3.nest()
         .key(function (d) { return d[property]; })
         .entries(classes);
 
+    console.log(nested);
+
     // create a root Node for the Tree Structure
-    var root = { key: "rootNode", children: [] };
+    var root = { key: property, children: [] };
 
     // create Parent Elements for each Nested Attribute
     nested.forEach(function (element) {
@@ -188,7 +191,7 @@ function drawSvgContent(classes, property) {
     // Info for leafes : actuall Files
     leafes.append("title")
         .text(function (d) {
-            return "Name : " + d.data.hash + "\n" +
+            return "Name : " + d.data.filename + "\n" +
                 "Size : " + d.data.size + "Byte" + "\n" +
                 "IPAddres : " + d.data.ipAddress + "\n" +
                 "DateTime : " + d.data.dateTime + "\n" +
@@ -200,7 +203,7 @@ function drawSvgContent(classes, property) {
         .attr("y", function (d) { return (d.y1 - d.y0) / 2; })
         .attr("class", "label")
         .text(function (d) {
-            var t = "Name: " + d.data.hash;
+            var t = "Name: " + d.data.filename;
 
             if (getTextWidth(t, "bold 12pt arial") > (d.x1 - d.x0))
                 return "X";
@@ -248,24 +251,12 @@ function setSelectorFields() {
     opt2.innerHTML = "IP Google Map";
 
     var opt3 = document.createElement("option");
-    opt3.value = "headerfingerprint";
-    opt3.innerHTML = "Headerfingerprint";
+    opt3.value = "headerFingerprint";
+    opt3.innerHTML = "HeaderFingerprint";
 
     propertySelector.appendChild(opt1);
     propertySelector.appendChild(opt2);
     propertySelector.appendChild(opt3);
-
-    //var propertys = Object.keys(data[0]);
-
-    //propertys.forEach(function (element) {
-
-    //    var opt = document.createElement("option");
-    //    opt.value = element;
-    //    opt.innerHTML = element;
-
-    //    propertySelector.appendChild(opt);
-    //});
-
 }
 
 function getTextWidth(text, font) {
@@ -290,7 +281,7 @@ function setIncpector(data) {
     resetHeaderList();
 
     idp.innerText = "Id : " + data.id;
-    hashp.innerText = "Hash : " + data.hash;
+    filenamep.innerText = "Filename : " + data.filename;
     sizep.innerText = "Size : " + data.size + " Byte";
     ipp.innerText = "IpAddress : " + data.ipAddress;
     datep.innerText = "Date : " + data.dateTime;
@@ -302,6 +293,7 @@ function setIncpector(data) {
     ispp.innerText = "ISP : " + data.isp;
 
     var hvPair = data.headers.split("|");
+    console.log(hvPair);
     hvPair.forEach(function (element) {
 
         var text = element.replace("=", " = ");
@@ -333,7 +325,7 @@ function resetInspector() {
     resetHeaderList();
 
     idp.innerText = "Id : ";
-    hashp.innerText = "Hash : ";
+    filenamep.innerText = "Filename : ";
     sizep.innerText = "Size : ";
     ipp.innerText = "IpAddress : ";
     datep.innerText = "Date : ";
