@@ -45,14 +45,14 @@ namespace ba_Vofpffs.Controllers
 
         // POST api/upload
         [HttpPost]
-        [Route ("api/uploadEmuA")]
-        public void PostEmu(string filename, string ip, int size, string header, bool setA, bool setB) => 
-            ProcessPost (filename, ip, size, header, setA, setB);
+        [Route ("api/uploadB")]
+        public void PostB() => ProcessPost (Request, "B");
 
         // POST api/upload
         [HttpPost]
-        [Route ("api/uploadB")]
-        public void PostB() => ProcessPost (Request, "B");
+        [Route ("api/uploadEmuA")]
+        public void PostEmu(string filename, string ip, int size, string header, bool setA, bool setB) => 
+            ProcessPost (filename, ip, size, header, setA, setB);
 
         public Dictionary<string, string> GetGeoInfo(string ip)
         {
@@ -127,26 +127,38 @@ namespace ba_Vofpffs.Controllers
 
             if(set == "A")
             {
-                List<FileEntryItemA> fileEntrys = new List<FileEntryItemA> ();
+                List<FileEntryItemA> fileEntrysA = new List<FileEntryItemA> ();
+                List<FileEntryItemB> fileEntrysB = new List<FileEntryItemB> ();
 
                 foreach(var file in files)
                 {
-                    byte[] fileArray = new byte[file.Length];
+                    // full path to file in temp location
+                    var filePath = Path.GetTempFileName ();
 
-                    using(var memoryStream = new MemoryStream ())
+                    if(file.Length > 0)
                     {
-                        file.CopyTo (memoryStream);
-                        fileArray = memoryStream.ToArray ();
+                        using(var stream = new FileStream (filePath, FileMode.Create))
+                        {
+                            file.CopyTo (stream);
+                        }
                     }
 
-                    fileEntrys.Add (new FileEntryItemA (file.FileName, null, fileArray.Length, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
+                    if (set == "A")
+                        fileEntrysA.Add (new FileEntryItemA (file.FileName, filePath, file.Length, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
+                    else if(set == "B")
+                        fileEntrysB.Add (new FileEntryItemB (file.FileName, filePath, file.Length, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
                 }
 
-                if(fileEntrys.Count != 0)
+                if(fileEntrysA.Count != 0 && set == "A")
                 {
-                    _context.FileEntryItemsA.AddRange (fileEntrys);
-                    _context.SaveChanges ();
+                    _context.FileEntryItemsA.AddRange (fileEntrysA);
                 }
+                else if (fileEntrysB.Count != 0 && set == "B")
+                {
+                    _context.FileEntryItemsB.AddRange (fileEntrysB);
+                }
+
+                _context.SaveChanges ();
             }
             else
             {
@@ -162,7 +174,7 @@ namespace ba_Vofpffs.Controllers
                         fileArray = memoryStream.ToArray ();
                     }
 
-                    fileEntrys.Add (new FileEntryItemB (file.FileName, null, fileArray.Length, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
+                    fileEntrys.Add (new FileEntryItemB (file.FileName, null, file.Length, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
                 }
 
                 if(fileEntrys.Count != 0)

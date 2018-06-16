@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 
 namespace ba_Vofpffs.Models
 {
@@ -10,13 +9,11 @@ namespace ba_Vofpffs.Models
 
         }
 
-        public FileEntryItemA(string hash, byte[] file, int size, string ipAddress, string headers, string headerFingerprint, 
+        public FileEntryItemA(string hash, string filepath, long size, string ipAddress, string headers, string headerFingerprint, 
             DateTime dateTime, string country, string regionName, string city, string lat, string lon, string isp) : base 
-            (hash, file, size, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp)
+            (hash, filepath, size, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp)
         {
 
         }
-
     }
 }
-
