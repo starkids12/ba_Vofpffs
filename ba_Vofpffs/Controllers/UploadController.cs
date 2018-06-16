@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ba_Vofpffs.Models;
-using System.Text;
 using Microsoft.AspNetCore.Http;
-using System.IO;
 using Newtonsoft.Json;
-using System.Net;
+using ba_Vofpffs.Models;
+
 
 namespace ba_Vofpffs.Controllers
 {
@@ -24,52 +23,38 @@ namespace ba_Vofpffs.Controllers
             _logger = logger;
             _context = context;
 
-            if(_context.FileEntryItemsA.Count () == 0)
+            if(_context.FileEntryItemsA.Count () == 0 && _context.FileEntryItemsB.Count() == 0)
             {
-                _logger.LogWarning ("DbSet is empty", "");
+                _logger.LogWarning ("DbSets are empty", "");
             }
         }
 
         // GET api/upload
         [HttpGet]
         [Route ("api/uploadA")]
-        public JsonResult GetA()
-        {
-            return Json (_context.FileEntryItemsA.ToList ());
-        }
+        public JsonResult GetA() => Json (_context.FileEntryItemsA.ToList ());
 
         [HttpGet]
         [Route ("api/uploadB")]
-        public JsonResult GetB()
-        {
-            return Json (_context.FileEntryItemsB.ToList ());
-        }
+        public JsonResult GetB() => Json (_context.FileEntryItemsB.ToList ());
 
         // POST api/upload
         [HttpPost]
         [Route ("api/uploadA")]
-        public void PostA()
-        {
-            ProcessPost (Request, "A");
-        }
+        public void PostA() => ProcessPost (Request, "A");
 
         // POST api/upload
         [HttpPost]
         [Route ("api/uploadEmuA")]
-        public void PostEmu(string filename, string ip, int size, string header, bool setA, bool setB)
-        {
+        public void PostEmu(string filename, string ip, int size, string header, bool setA, bool setB) => 
             ProcessPost (filename, ip, size, header, setA, setB);
-        }
 
         // POST api/upload
         [HttpPost]
         [Route ("api/uploadB")]
-        public void PostB()
-        {
-            ProcessPost (Request, "B");
-        }
+        public void PostB() => ProcessPost (Request, "B");
 
-        public Dictionary<string, string> getGeoInfo(string ip)
+        public Dictionary<string, string> GetGeoInfo(string ip)
         {
 
             List<string> o = new List<string> ();
@@ -127,7 +112,7 @@ namespace ba_Vofpffs.Controllers
 
             string ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString ();
 
-            Dictionary<string, string> geoInfo = getGeoInfo (ipAddress);
+            Dictionary<string, string> geoInfo = GetGeoInfo (ipAddress);
 
             string country, regionName, city, lat, lon, isp;
 
@@ -219,7 +204,7 @@ namespace ba_Vofpffs.Controllers
                 }
             }
 
-            Dictionary<string, string> geoInfo = getGeoInfo (ip);
+            Dictionary<string, string> geoInfo = GetGeoInfo (ip);
 
             string country, regionName, city, lat, lon, isp;
 

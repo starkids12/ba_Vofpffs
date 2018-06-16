@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 using System;
 
 namespace ba_Vofpffs.Migrations
@@ -20,7 +21,7 @@ namespace ba_Vofpffs.Migrations
                 .HasAnnotation("ProductVersion", "2.0.2-rtm-10011")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("ba_Vofpffs.Models.FileEntryItemA", b =>
+            modelBuilder.Entity("ba_Vofpffs.Models.FileEntryItem", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
@@ -30,6 +31,9 @@ namespace ba_Vofpffs.Migrations
                     b.Property<string>("Country");
 
                     b.Property<DateTime>("DateTime");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired();
 
                     b.Property<byte[]>("File");
 
@@ -53,43 +57,29 @@ namespace ba_Vofpffs.Migrations
 
                     b.HasKey("ID");
 
+                    b.ToTable("FileEntryItem");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("FileEntryItem");
+                });
+
+            modelBuilder.Entity("ba_Vofpffs.Models.FileEntryItemA", b =>
+                {
+                    b.HasBaseType("ba_Vofpffs.Models.FileEntryItem");
+
+
                     b.ToTable("FileEntryA");
+
+                    b.HasDiscriminator().HasValue("FileEntryItemA");
                 });
 
             modelBuilder.Entity("ba_Vofpffs.Models.FileEntryItemB", b =>
                 {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd();
+                    b.HasBaseType("ba_Vofpffs.Models.FileEntryItem");
 
-                    b.Property<string>("City");
-
-                    b.Property<string>("Country");
-
-                    b.Property<DateTime>("DateTime");
-
-                    b.Property<byte[]>("File");
-
-                    b.Property<string>("Filename");
-
-                    b.Property<string>("HeaderFingerprint");
-
-                    b.Property<string>("Headers");
-
-                    b.Property<string>("IPAddress");
-
-                    b.Property<string>("Isp");
-
-                    b.Property<float>("Lat");
-
-                    b.Property<float>("Lon");
-
-                    b.Property<string>("RegionName");
-
-                    b.Property<int>("Size");
-
-                    b.HasKey("ID");
 
                     b.ToTable("FileEntryB");
+
+                    b.HasDiscriminator().HasValue("FileEntryItemB");
                 });
 #pragma warning restore 612, 618
         }
