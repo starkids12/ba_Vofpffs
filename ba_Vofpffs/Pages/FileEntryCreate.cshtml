@@ -1,0 +1,135 @@
+﻿@page
+@model ba_Vofpffs.Pages.FileEntryCreateModel
+@*<div class="row">
+        <div class="col-md-4">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label class="control-label">Set</label>
+                    <select asp-for="selectedSet" >
+                        <option>Set A</option>
+                        <option>Set B</option>
+                        <option>Set A & Set B</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Filename</label>
+                    <input asp-for="filename" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Size</label>
+                    <input asp-for="size" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">IpAddress</label>
+                    <input asp-for="ipAddress" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Headers</label>
+                    <input asp-for="headers" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">HeaderFingerprint</label>
+                    <input asp-for="headerFingerprint" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">DateTime</label>
+                    <input asp-for="dateTime" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Country</label>
+                    <input asp-for="country" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">RegionName</label>
+                    <input asp-for="regionName" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">City</label>
+                    <input asp-for="city" class="form-control" />
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Lat</label>
+                    <input asp-for="Lat" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Lon</label>
+                    <input asp-for="lon" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Isp</label>
+                    <input asp-for="isp" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </form>
+        </div>
+    </div>*@
+
+<div>
+    <h4>Upload Files Set A</h4>
+    <form method="post" enctype="multipart/form-data" asp-controller="Upload" asp-action="PostA">
+        <div class="form-group">
+            <div class="col-md-10">
+                <p>Upload one or more files using this form:</p>
+                <input type="file" name="files" multiple />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10">
+                <input type="submit" value="Upload" />
+            </div>
+        </div>
+    </form>
+
+    <h4>Upload Files Set B</h4>
+    <form method="post" enctype="multipart/form-data" asp-controller="Upload" asp-action="PostB">
+        <div class="form-group">
+            <div class="col-md-10">
+                <p>Upload one or more files using this form:</p>
+                <input type="file" name="files" multiple />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10">
+                <input type="submit" value="Upload" />
+            </div>
+        </div>
+    </form>
+</div>
+
+<div>
+    <form method="post" asp-controller="Upload" asp-action="PostEmu">
+        <div class="form-group">
+            <p>Create a entry with a given IpAddress</p>
+            <p>Headers are expected in a Format ("{0}={1}", x.Key, x.Value) seperated by "|" foreach Key-Value-Pair</p>
+            <input type="checkbox" name="SetA" value="true">Set A
+            <input type="checkbox" name="SetB" value="true">Set B
+            <input type="text" placeholder="Filename" name="Filename" />
+            <input type="text" placeholder="IpAddress" name="Ip" />
+            <input type="number" placeholder="Size in Byte" name="Size" />
+            <input type="text" placeholder="Header" name="Header" />
+
+            <input type="submit" value="Upload" />
+        </div>
+    </form>
+
+    <form method="post" asp-controller="Upload" asp-action="PostEmu">
+        <div class="form-group">
+            <p>Create a entry with a random IpAddress</p>
+            <p>Headers are expected in a Format ("{0}={1}", x.Key, x.Value) seperated by "|" foreach Key-Value-Pair</p>
+            <input type="checkbox" name="SetA" value="true">Set A
+            <input type="checkbox" name="SetB" value="true">Set B
+            <input type="text" placeholder="Filename" name="Filename" />
+            <input type="number" placeholder="Size in Byte" name="Size" />
+            <input type="text" placeholder="Header" name="Header" />
+
+            <input type="submit" value="Upload" />
+        </div>
+    </form>
+
+</div>

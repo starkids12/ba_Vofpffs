@@ -18,7 +18,6 @@ namespace ba_Vofpffs.Controllers
     {
         private readonly FileEntryContext _context;
         private readonly ILogger _logger;
-        private String test = "123";
 
         public UploadController(ILogger<UploadController> logger, FileEntryContext context)
         {
@@ -27,7 +26,7 @@ namespace ba_Vofpffs.Controllers
 
             if(_context.FileEntryItemsA.Count () == 0)
             {
-                _logger.LogWarning ("DbSet is empty", test);
+                _logger.LogWarning ("DbSet is empty", "");
             }
         }
 
@@ -56,27 +55,22 @@ namespace ba_Vofpffs.Controllers
 
         // POST api/upload
         [HttpPost]
+        [Route ("api/uploadEmuA")]
+        public void PostEmu(string filename, string ip, int size, string header, bool setA, bool setB)
+        {
+            ProcessPost (filename, ip, size, header, setA, setB);
+        }
+
+        // POST api/upload
+        [HttpPost]
         [Route ("api/uploadB")]
         public void PostB()
         {
             ProcessPost (Request, "B");
         }
 
-        // PUT api/upload/5
-        [HttpPut ("{id}")]
-        [Route ("api/upload")]
-        public void Put(int id, [FromBody]string value)
+        public Dictionary<string, string> getGeoInfo(string ip)
         {
-        }
-
-        // DELETE api/upload/5
-        [HttpDelete ("{id}")]
-        [Route ("api/upload")]
-        public void Delete(int id)
-        {
-        }
-
-        public Dictionary<string, string> getGeoInfo(string ip) {
 
             List<string> o = new List<string> ();
 
@@ -146,7 +140,7 @@ namespace ba_Vofpffs.Controllers
 
             var files = Request.Form.Files;
 
-            if (set == "A")
+            if(set == "A")
             {
                 List<FileEntryItemA> fileEntrys = new List<FileEntryItemA> ();
 
@@ -193,5 +187,60 @@ namespace ba_Vofpffs.Controllers
                 }
             }
         }
-     }
+
+        public void ProcessPost(string filename, string ip, int size, string headers, bool setA, bool setB)
+        {
+            DateTime dateTime = DateTime.Now;
+
+            List<string> keyValuePairs = headers.Split ("|").ToList();
+
+            Dictionary<string, string> headerDictonary = keyValuePairs.ToDictionary (x => x.Split ("=").FirstOrDefault(), x => x.Split ("=").LastOrDefault());
+
+            string headerFingerprint = "";
+
+            foreach(var header in headerDictonary)
+            {
+                if(header.Key == "User-Agent" || header.Key == "Accept-Encoding" || header.Key == "Accept")
+                {
+                    headerFingerprint += String.Format ("{0}={1}|", header.Key, header.Value);
+                }
+            }
+
+            if (ip == null)
+            {
+                Random random = new Random ();
+
+                ip = "";
+                for(int i = 0; i < 4; i++)
+                {
+                    ip += random.Next (0, 255);
+                    if(i != 3)
+                        ip += ".";
+                }
+            }
+
+            Dictionary<string, string> geoInfo = getGeoInfo (ip);
+
+            string country, regionName, city, lat, lon, isp;
+
+            geoInfo.TryGetValue ("country", out country);
+            geoInfo.TryGetValue ("regionName", out regionName);
+            geoInfo.TryGetValue ("city", out city);
+            geoInfo.TryGetValue ("lat", out lat);
+            geoInfo.TryGetValue ("lon", out lon);
+            geoInfo.TryGetValue ("isp", out isp);
+
+            if(setA)
+            {
+                _context.FileEntryItemsA.Add (new FileEntryItemA (filename, null, size, ip, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
+                _context.SaveChanges ();
+            }
+
+            if (setB)
+            {
+                _context.FileEntryItemsB.Add (new FileEntryItemB (filename, null, size, ip, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
+                _context.SaveChanges ();
+            }
+        }
+    }
 }

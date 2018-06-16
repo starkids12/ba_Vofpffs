@@ -38,8 +38,10 @@ namespace ba_Vofpffs
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
             app.UseStaticFiles ();
+
+            app.UseMvc();
+
         }
     }
 }
