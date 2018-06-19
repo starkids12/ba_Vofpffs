@@ -54,7 +54,7 @@ namespace ba_Vofpffs.Controllers
         public void PostEmu(string filename, string ip, int size, string header, bool setA, bool setB) => 
             ProcessPost (filename, ip, size, header, setA, setB);
 
-        public Dictionary<string, string> GetGeoInfo(string ip)
+        private Dictionary<string, string> GetGeoInfo(string ip)
         {
 
             List<string> o = new List<string> ();
@@ -94,7 +94,7 @@ namespace ba_Vofpffs.Controllers
             return info;
         }
 
-        public void ProcessPost(HttpRequest request, string set)
+        private void ProcessPost(HttpRequest request, string set)
         {
             DateTime dateTime = DateTime.Now;
 
@@ -185,7 +185,7 @@ namespace ba_Vofpffs.Controllers
             }
         }
 
-        public void ProcessPost(string filename, string ip, int size, string headers, bool setA, bool setB)
+        private void ProcessPost(string filename, string ip, int size, string headers, bool setA, bool setB)
         {
             DateTime dateTime = DateTime.Now;
 
