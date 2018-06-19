@@ -189,19 +189,24 @@ namespace ba_Vofpffs.Controllers
         {
             DateTime dateTime = DateTime.Now;
 
-            List<string> keyValuePairs = headers.Split ("|").ToList();
-
-            Dictionary<string, string> headerDictonary = keyValuePairs.ToDictionary (x => x.Split ("=").FirstOrDefault(), x => x.Split ("=").LastOrDefault());
-
+            List<string> keyValuePairs;
+            Dictionary<string, string> headerDictonary;
             string headerFingerprint = "";
 
-            foreach(var header in headerDictonary)
+            if (headers != null)
             {
-                if(header.Key == "User-Agent" || header.Key == "Accept-Encoding" || header.Key == "Accept")
+                keyValuePairs = headers.Split ("|").ToList ();
+                headerDictonary = keyValuePairs.ToDictionary (x => x.Split ("=").FirstOrDefault (), x => x.Split ("=").LastOrDefault ());
+
+                foreach(var header in headerDictonary)
                 {
-                    headerFingerprint += String.Format ("{0}={1}|", header.Key, header.Value);
+                    if(header.Key == "User-Agent" || header.Key == "Accept-Encoding" || header.Key == "Accept")
+                    {
+                        headerFingerprint += String.Format ("{0}={1}|", header.Key, header.Value);
+                    }
                 }
             }
+
 
             if (ip == null)
             {

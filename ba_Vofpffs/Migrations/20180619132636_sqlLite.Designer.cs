@@ -11,15 +11,14 @@ using System;
 namespace ba_Vofpffs.Migrations
 {
     [DbContext(typeof(FileEntryContext))]
-    [Migration("20180616140625_filePath")]
-    partial class filePath
+    [Migration("20180619132636_sqlLite")]
+    partial class sqlLite
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.0.2-rtm-10011")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "2.0.2-rtm-10011");
 
             modelBuilder.Entity("ba_Vofpffs.Models.FileEntryItemA", b =>
                 {

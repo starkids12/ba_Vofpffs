@@ -9,6 +9,11 @@ namespace ba_Vofpffs.Models
         public DbSet<FileEntryItemA> FileEntryItemsA { get; set; }
         public DbSet<FileEntryItemB> FileEntryItemsB { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite ("Data Source=FileEntrys.db");
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<FileEntryItemA> ().ToTable ("FileEntryA");
