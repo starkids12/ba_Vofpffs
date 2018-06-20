@@ -6,8 +6,7 @@ namespace ba_Vofpffs.Models
     {
         public FileEntryContext(DbContextOptions<FileEntryContext> options) : base (options) { }
 
-        public DbSet<FileEntryItemA> FileEntryItemsA { get; set; }
-        public DbSet<FileEntryItemB> FileEntryItemsB { get; set; }
+        public DbSet<FileEntryItem> FileEntryItems { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -16,8 +15,7 @@ namespace ba_Vofpffs.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<FileEntryItemA> ().ToTable ("FileEntryA");
-            modelBuilder.Entity<FileEntryItemB> ().ToTable ("FileEntryB");
+            modelBuilder.Entity<FileEntryItem> ().ToTable ("FileEntry");
         }
     }
 }

@@ -19,13 +19,11 @@ namespace ba_Vofpffs.Pages
             _context = context;
         }
 
-        public IList<FileEntryItemA> FileEntryItemsA { get; set; }
-        public IList<FileEntryItemB> FileEntryItemsB { get; set; }
+        public IList<FileEntryItem> FileEntryItems { get; set; }
 
         public async void OnGetAsync()
         {
-            FileEntryItemsA = await _context.FileEntryItemsA.ToListAsync();
-            FileEntryItemsB = await _context.FileEntryItemsB.ToListAsync();
+            FileEntryItems = await _context.FileEntryItems.ToListAsync();
         }
     }
 }

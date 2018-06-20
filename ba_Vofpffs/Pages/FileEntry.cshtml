@@ -31,51 +31,57 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsA[0].Filename)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Set)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsA[0].Filepath)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Filename)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsA[0].Size)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Filepath)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsA[0].IPAddress)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Size)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsA[0].Headers)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].IPAddress)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsA[0].HeaderFingerprint)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Headers)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsA[0].DateTime)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].HeaderFingerprint)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsA[0].Country)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].DateTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsA[0].RegionName)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Country)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsA[0].City)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].RegionName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsA[0].Lat)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].City)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsA[0].Lon)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Lat)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsA[0].Isp)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Lon)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Isp)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach(var item in Model.FileEntryItemsA)
+        @foreach(var item in Model.FileEntryItems.Where (x => x.Set == "A"))
         {
             <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Set)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Filename)
                 </td>
@@ -114,11 +120,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Isp)
-                </td>
-                <td>
-                    <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
-                    <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
                 </td>
             </tr>
         }
@@ -130,96 +131,97 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsB[0].Filename)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Set)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsB[0].Filepath)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Filename)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsB[0].Size)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Filepath)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsB[0].IPAddress)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Size)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsB[0].Headers)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].IPAddress)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsB[0].HeaderFingerprint)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Headers)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsB[0].DateTime)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].HeaderFingerprint)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsB[0].Country)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].DateTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsB[0].RegionName)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Country)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsB[0].City)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].RegionName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsB[0].Lat)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].City)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsB[0].Lon)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Lat)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileEntryItemsB[0].Isp)
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Lon)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FileEntryItems[0].Isp)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach(var item in Model.FileEntryItemsB)
+        @foreach(var item in Model.FileEntryItems.Where(x => x.Set == "B"))
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Filename)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Filepath)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Size)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IPAddress)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Headers)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.HeaderFingerprint)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Country)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RegionName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.City)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Lat)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Lon)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Isp)
-                </td>
-                <td>
-                    <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
-                    <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Set)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Filename)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Filepath)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Size)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IPAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Headers)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HeaderFingerprint)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Country)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegionName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lat)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Isp)
+            </td>
+        </tr>
         }
     </tbody>
 </table>

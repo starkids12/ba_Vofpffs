@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using ba_Vofpffs.Models;
 
-
 namespace ba_Vofpffs.Controllers
 {
 
@@ -23,7 +22,7 @@ namespace ba_Vofpffs.Controllers
             _logger = logger;
             _context = context;
 
-            if(_context.FileEntryItemsA.Count () == 0 && _context.FileEntryItemsB.Count() == 0)
+            if(_context.FileEntryItems.Count () == 0)
             {
                 _logger.LogWarning ("DbSets are empty", "");
             }
@@ -32,27 +31,38 @@ namespace ba_Vofpffs.Controllers
         // GET api/upload
         [HttpGet]
         [Route ("api/uploadA")]
-        public JsonResult GetA() => Json (_context.FileEntryItemsA.ToList ());
+        public JsonResult GetA() => Json (_context.FileEntryItems.Where (x => x.Set == "A").ToList ());
 
         [HttpGet]
         [Route ("api/uploadB")]
-        public JsonResult GetB() => Json (_context.FileEntryItemsB.ToList ());
+        public JsonResult GetB() => Json (_context.FileEntryItems.Where (x => x.Set == "B").ToList ());
 
         // POST api/upload
         [HttpPost]
         [Route ("api/uploadA")]
-        public void PostA() => ProcessPost (Request, "A");
+        public RedirectToPageResult PostA()
+        {
+            ProcessPost (Request, "A");
+            return RedirectToPage ("/FileEntry");
+        }
 
         // POST api/upload
         [HttpPost]
         [Route ("api/uploadB")]
-        public void PostB() => ProcessPost (Request, "B");
+        public RedirectToPageResult PostB()
+        {
+            ProcessPost (Request, "B");
+            return RedirectToPage ("/FileEntry");
+        }
 
         // POST api/upload
         [HttpPost]
         [Route ("api/uploadEmuA")]
-        public void PostEmu(string filename, string ip, int size, string header, bool setA, bool setB) => 
+        public RedirectToPageResult PostEmu(string filename, string ip, int size, string header, bool setA, bool setB)
+        {
             ProcessPost (filename, ip, size, header, setA, setB);
+            return RedirectToPage ("/FileEntry");
+        }
 
         private Dictionary<string, string> GetGeoInfo(string ip)
         {
@@ -114,75 +124,34 @@ namespace ba_Vofpffs.Controllers
 
             Dictionary<string, string> geoInfo = GetGeoInfo (ipAddress);
 
-            string country, regionName, city, lat, lon, isp;
-
-            geoInfo.TryGetValue ("country", out country);
-            geoInfo.TryGetValue ("regionName", out regionName);
-            geoInfo.TryGetValue ("city", out city);
-            geoInfo.TryGetValue ("lat", out lat);
-            geoInfo.TryGetValue ("lon", out lon);
-            geoInfo.TryGetValue ("isp", out isp);
+            geoInfo.TryGetValue ("country", out string country);
+            geoInfo.TryGetValue ("regionName", out string regionName);
+            geoInfo.TryGetValue ("city", out string city);
+            geoInfo.TryGetValue ("lat", out string lat);
+            geoInfo.TryGetValue ("lon", out string lon);
+            geoInfo.TryGetValue ("isp", out string isp);
 
             var files = Request.Form.Files;
 
-            if(set == "A")
+            List<FileEntryItem> fileEntrys = new List<FileEntryItem> ();
+
+            foreach(var file in files)
             {
-                List<FileEntryItemA> fileEntrysA = new List<FileEntryItemA> ();
-                List<FileEntryItemB> fileEntrysB = new List<FileEntryItemB> ();
+                // full path to file in temp location
+                var filePath = Path.GetTempFileName ();
 
-                foreach(var file in files)
+                if(file.Length > 0)
                 {
-                    // full path to file in temp location
-                    var filePath = Path.GetTempFileName ();
-
-                    if(file.Length > 0)
+                    using(var stream = new FileStream (filePath, FileMode.Create))
                     {
-                        using(var stream = new FileStream (filePath, FileMode.Create))
-                        {
-                            file.CopyTo (stream);
-                        }
+                        file.CopyTo (stream);
                     }
-
-                    if (set == "A")
-                        fileEntrysA.Add (new FileEntryItemA (file.FileName, filePath, file.Length, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
-                    else if(set == "B")
-                        fileEntrysB.Add (new FileEntryItemB (file.FileName, filePath, file.Length, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
                 }
-
-                if(fileEntrysA.Count != 0 && set == "A")
-                {
-                    _context.FileEntryItemsA.AddRange (fileEntrysA);
-                }
-                else if (fileEntrysB.Count != 0 && set == "B")
-                {
-                    _context.FileEntryItemsB.AddRange (fileEntrysB);
-                }
-
-                _context.SaveChanges ();
+                fileEntrys.Add (new FileEntryItem (set, file.FileName, filePath, file.Length, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
             }
-            else
-            {
-                List<FileEntryItemB> fileEntrys = new List<FileEntryItemB> ();
 
-                foreach(var file in files)
-                {
-                    byte[] fileArray = new byte[file.Length];
-
-                    using(var memoryStream = new MemoryStream ())
-                    {
-                        file.CopyTo (memoryStream);
-                        fileArray = memoryStream.ToArray ();
-                    }
-
-                    fileEntrys.Add (new FileEntryItemB (file.FileName, null, file.Length, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
-                }
-
-                if(fileEntrys.Count != 0)
-                {
-                    _context.FileEntryItemsB.AddRange (fileEntrys);
-                    _context.SaveChanges ();
-                }
-            }
+            _context.FileEntryItems.AddRange (fileEntrys);
+            _context.SaveChanges ();
         }
 
         private void ProcessPost(string filename, string ip, int size, string headers, bool setA, bool setB)
@@ -193,7 +162,7 @@ namespace ba_Vofpffs.Controllers
             Dictionary<string, string> headerDictonary;
             string headerFingerprint = "";
 
-            if (headers != null)
+            if(headers != null)
             {
                 keyValuePairs = headers.Split ("|").ToList ();
                 headerDictonary = keyValuePairs.ToDictionary (x => x.Split ("=").FirstOrDefault (), x => x.Split ("=").LastOrDefault ());
@@ -207,8 +176,7 @@ namespace ba_Vofpffs.Controllers
                 }
             }
 
-
-            if (ip == null)
+            if(ip == null)
             {
                 Random random = new Random ();
 
@@ -223,26 +191,24 @@ namespace ba_Vofpffs.Controllers
 
             Dictionary<string, string> geoInfo = GetGeoInfo (ip);
 
-            string country, regionName, city, lat, lon, isp;
-
-            geoInfo.TryGetValue ("country", out country);
-            geoInfo.TryGetValue ("regionName", out regionName);
-            geoInfo.TryGetValue ("city", out city);
-            geoInfo.TryGetValue ("lat", out lat);
-            geoInfo.TryGetValue ("lon", out lon);
-            geoInfo.TryGetValue ("isp", out isp);
+            geoInfo.TryGetValue ("country", out string country);
+            geoInfo.TryGetValue ("regionName", out string regionName);
+            geoInfo.TryGetValue ("city", out string city);
+            geoInfo.TryGetValue ("lat", out string lat);
+            geoInfo.TryGetValue ("lon", out string lon);
+            geoInfo.TryGetValue ("isp", out string isp);
 
             if(setA)
             {
-                _context.FileEntryItemsA.Add (new FileEntryItemA (filename, null, size, ip, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
-                _context.SaveChanges ();
+                _context.FileEntryItems.Add (new FileEntryItem ("A", filename, null, size, ip, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
             }
 
-            if (setB)
+            if(setB)
             {
-                _context.FileEntryItemsB.Add (new FileEntryItemB (filename, null, size, ip, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
-                _context.SaveChanges ();
+                _context.FileEntryItems.Add (new FileEntryItem ("B", filename, null, size, ip, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
             }
+
+            _context.SaveChanges ();
         }
     }
 }

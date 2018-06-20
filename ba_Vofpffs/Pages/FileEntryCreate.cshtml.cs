@@ -10,8 +10,6 @@ namespace ba_Vofpffs.Pages
 {
     public class FileEntryCreateModel : PageModel
     {
-        private readonly ba_Vofpffs.Models.FileEntryContext _context;
-
         public IActionResult OnGet()
         {
             return Page ();

@@ -10,9 +10,10 @@ namespace ba_Vofpffs.Models
 
         }
 
-        public FileEntryItem(string hash, string filepath, long size, string ipAddress, string headers, string headerFingerprint, DateTime dateTime,
+        public FileEntryItem(string set, string hash, string filepath, long size, string ipAddress, string headers, string headerFingerprint, DateTime dateTime,
             string country, string regionName, string city, string lat, string lon, string isp)
         {
+            this.Set = set;
             this.Filename = hash;
             this.Filepath = filepath;
             this.Size = size;
@@ -38,6 +39,7 @@ namespace ba_Vofpffs.Models
         }
 
         public int ID { get; set; }
+        public string Set { get; set; }
         public string Filename { get; set; }
         public string Filepath { get; set; }
         public long Size { get; set; }
