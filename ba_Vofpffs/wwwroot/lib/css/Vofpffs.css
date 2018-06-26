@@ -66,3 +66,9 @@ p {
     overflow: auto;
     max-height: 100vh;
 }
+
+td {
+    overflow: scroll;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
