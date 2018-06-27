@@ -68,8 +68,42 @@ function renderChart() {
         else if (selectedVisualiation == "headerFingerprint") {
             drawSvgContent(classes, "headerFingerprint");
         }
+        else if (selectedVisualiation == "timeLine") {
+            drawTimeLine(classes);
+        }
     });
 };
+
+function drawTimeLine(classes) {
+    var parse = d3.utcParse("%Y-%m-%dT%H:%M:%S.%f");
+    var formatTime = d3.utcFormat("%B %d, %Y");
+    
+    console.log(classes);
+    var date = classes[0].dateTime.slice(0, -1);
+    console.log(date);
+    console.log(parse(date));
+    console.log(formatTime(parse(date)));
+
+    var canvasElement = document.getElementById("FileEntryChart");
+    while (canvasElement.firstChild) {
+        canvasElement.removeChild(canvasElement.firstChild);
+    }
+    var svg = d3.select(canvasElement).append("svg");
+
+    var width = canvasElement.clientWidth;
+    var height = canvasElement.clientHeight;
+
+    svg.attr("width", width).attr("height", height);
+
+    var x = d3.scaleTime()
+        .rangeRound([0, width]);
+
+    var axis = d3.axisBottom(x);
+
+    svg.append("g")
+        .attr("transform", "translate(0," + height / 2 + ")")
+        .call(axis);
+}
 
 function drawGoogleMap(classes) {
 
@@ -91,15 +125,10 @@ function drawGoogleMap(classes) {
     cords.forEach(function (element) {
         var marker = new google.maps.Marker({
             position: new google.maps.LatLng(element.lat, element.lon),
-            map: map
+            map: map,
+            title: "Data Count: " + element.count
         })
     });
-
-    //var marker = new google.maps.Marker({
-    //    position: new google.maps.LatLng(53.574, 9.9747),
-    //    map: map,
-    //    title: "test"
-    //});
 }
 
 function drawSvgContent(classes, property) {
@@ -254,9 +283,14 @@ function setSelectorFields() {
     opt3.value = "headerFingerprint";
     opt3.innerHTML = "HeaderFingerprint";
 
+    var opt4 = document.createElement("option");
+    opt4.value = "timeLine";
+    opt4.innerHTML = "Time Line";
+
     propertySelector.appendChild(opt1);
     propertySelector.appendChild(opt2);
     propertySelector.appendChild(opt3);
+    propertySelector.appendChild(opt4);
 }
 
 function getTextWidth(text, font) {
@@ -346,7 +380,7 @@ function getAllLatLon(classes) {
     var ret = [];
 
     nested.forEach(function (element) {
-        ret.push({ lat: element.values[0].lat, lon: element.values[0].lon });
+        ret.push({ lat: element.values[0].lat, lon: element.values[0].lon, count: element.values.length });
     });
 
     return ret;
