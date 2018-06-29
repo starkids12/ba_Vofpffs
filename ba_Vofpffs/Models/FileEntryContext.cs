@@ -8,10 +8,10 @@ namespace ba_Vofpffs.Models
 
         public DbSet<FileEntryItem> FileEntryItems { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite ("Data Source=FileEntrys.db");
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlite ("Data Source=FileEntrysIpProxy.db");
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

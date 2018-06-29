@@ -95,14 +95,57 @@ function drawTimeLine(classes) {
 
     svg.attr("width", width).attr("height", height);
 
+    var nested = d3.nest()
+        .key(function (d) { return d.dateTime; })
+        .entries(classes);
+
     var x = d3.scaleTime()
-        .rangeRound([0, width]);
+        .domain([parse(classes[0].dateTime.slice(0, -1)),
+        parse(classes[classes.length - 1].dateTime.slice(0, -1))])
+        .range([0, width - 200]);
+
+    var y = d3.scaleLinear()
+        .rangeRound([0, height-200])
+        .domain([0, d3.max(nested, function (d) { return d.values.length; })]);
+
+    console.log(nested);
 
     var axis = d3.axisBottom(x);
 
     svg.append("g")
-        .attr("transform", "translate(0," + height / 2 + ")")
+        .attr("transform", "translate(100," + height / 1.15 + ")")
         .call(axis);
+
+    svg.selectAll(".bar")
+        .data(nested)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", function (d) { return x(parse(d.key.slice(0, -1))) + 95; })
+        .attr("y", function (d) { return (height / 1.15) - y(d.values.length); })
+        .attr("width", 10)
+        .attr("height", function (d) { return y(d.values.length); })
+        .attr("fill", "blue");
+
+    svg.selectAll(".bar")
+        .append("title")
+        .text(function (d) {
+
+            var t1 = "File Count : " + d.values.length;
+
+            d.values.forEach(function (element) {
+
+                t1 += "\n" + " - - - - -" + "\n";
+                t1 += "Filename: " + element.filename + "\n" +
+                    "Filesize: " + element.size + " Byte \n" +
+                    "IpAddress: " + element.ipAddress + "\n" +
+                    "Datetime:" + element.dateTime + "\n";
+
+                
+            });
+            return t1;
+
+        });
 }
 
 function drawGoogleMap(classes) {
