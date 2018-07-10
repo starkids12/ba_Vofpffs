@@ -30,11 +30,11 @@ namespace ba_Vofpffs.Controllers
 
         // GET api/upload
         [HttpGet]
-        [Route ("api/uploadA")]
+        [Route ("api/GetA")]
         public JsonResult GetA() => Json (_context.FileEntryItems.Where (x => x.Set == "A").ToList ());
 
         [HttpGet]
-        [Route ("api/uploadB")]
+        [Route ("api/GetB")]
         public JsonResult GetB() => Json (_context.FileEntryItems.Where (x => x.Set == "B").ToList ());
 
         // POST api/upload
@@ -55,9 +55,9 @@ namespace ba_Vofpffs.Controllers
             return RedirectToPage ("/FileEntry");
         }
 
-        // POST api/upload
+        // POST api/uploadEmu
         [HttpPost]
-        [Route ("api/uploadEmuA")]
+        [Route ("api/uploadEmu")]
         public RedirectToPageResult PostEmu(string filename, string ip, int size, string header, bool setA, bool setB)
         {
             ProcessPost (filename, ip, size, header, setA, setB);
