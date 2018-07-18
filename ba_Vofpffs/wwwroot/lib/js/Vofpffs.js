@@ -1,4 +1,4 @@
-﻿var selectedDbSet = "api/uploadA";
+﻿var selectedDbSet = "api/GetA";
 var selectedProperty = "";
 
 var selectedVisualiation = "";
@@ -386,11 +386,11 @@ function setDbSet(id) {
 
     if (id == "buttonA") {
         selectedDbSetp.innerText = "DB Set A";
-        selectedDbSet = "api/uploadA";
+        selectedDbSet = "api/GetA";
     }
     else if (id == "buttonB") {
         selectedDbSetp.innerText = "DB Set B";
-        selectedDbSet = "api/uploadB";
+        selectedDbSet = "api/GetB";
     }
 
     resetInspector()
