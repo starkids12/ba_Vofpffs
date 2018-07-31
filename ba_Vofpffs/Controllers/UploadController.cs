@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using ba_Vofpffs.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ba_Vofpffs.Controllers
 {
@@ -22,83 +24,83 @@ namespace ba_Vofpffs.Controllers
             _logger = logger;
             _context = context;
 
-            if(_context.FileEntryItems.Count () == 0)
+            if (_context.FileEntryItems.Count() == 0)
             {
-                _logger.LogWarning ("DbSets are empty", "");
+                _logger.LogWarning("DbSets are empty", "");
             }
         }
 
         // GET api/upload
         [HttpGet]
-        [Route ("api/GetA")]
-        public JsonResult GetA() => Json (_context.FileEntryItems.Where (x => x.Set == "A").ToList ());
+        [Route("api/GetA")]
+        public JsonResult GetA() => Json(_context.FileEntryItems.Where(x => x.Set == "A").ToList());
 
         [HttpGet]
-        [Route ("api/GetB")]
-        public JsonResult GetB() => Json (_context.FileEntryItems.Where (x => x.Set == "B").ToList ());
+        [Route("api/GetB")]
+        public JsonResult GetB() => Json(_context.FileEntryItems.Where(x => x.Set == "B").ToList());
 
         // POST api/upload
         [HttpPost]
-        [Route ("api/uploadA")]
+        [Route("api/uploadA")]
         public RedirectToPageResult PostA()
         {
-            ProcessPost (Request, "A");
-            return RedirectToPage ("/FileEntry");
+            ProcessPost(Request, "A");
+            return RedirectToPage("/FileEntry");
         }
 
         // POST api/upload
         [HttpPost]
-        [Route ("api/uploadB")]
+        [Route("api/uploadB")]
         public RedirectToPageResult PostB()
         {
-            ProcessPost (Request, "B");
-            return RedirectToPage ("/FileEntry");
+            ProcessPost(Request, "B");
+            return RedirectToPage("/FileEntry");
         }
 
         // POST api/uploadEmu
         [HttpPost]
-        [Route ("api/uploadEmu")]
+        [Route("api/uploadEmu")]
         public RedirectToPageResult PostEmu(string filename, string ip, int size, string header, bool setA, bool setB)
         {
-            ProcessPost (filename, ip, size, header, setA, setB);
-            return RedirectToPage ("/FileEntry");
+            ProcessPost(filename, ip, size, header, setA, setB);
+            return RedirectToPage("/FileEntry");
         }
 
         private Dictionary<string, string> GetGeoInfo(string ip)
         {
 
-            List<string> o = new List<string> ();
+            List<string> o = new List<string>();
 
             string json = "";
             string url = @"http://ip-api.com/json/" + ip;
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create (url);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.AutomaticDecompression = DecompressionMethods.GZip;
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
-            using(var streamReader = new StreamReader (response.GetResponseStream ()))
+            using (var streamReader = new StreamReader(response.GetResponseStream()))
             {
-                json = streamReader.ReadToEnd ();
+                json = streamReader.ReadToEnd();
             }
 
-            var info = JsonConvert.DeserializeObject<Dictionary<string, string>> (json);
+            var info = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
             string country, regionName, city, lat, lon, isp;
 
-            info.TryGetValue ("country", out country);
-            info.TryGetValue ("regionName", out regionName);
-            info.TryGetValue ("city", out city);
-            info.TryGetValue ("lat", out lat);
-            info.TryGetValue ("lon", out lon);
-            info.TryGetValue ("isp", out isp);
+            info.TryGetValue("country", out country);
+            info.TryGetValue("regionName", out regionName);
+            info.TryGetValue("city", out city);
+            info.TryGetValue("lat", out lat);
+            info.TryGetValue("lon", out lon);
+            info.TryGetValue("isp", out isp);
 
-            o.Add (country);
-            o.Add (regionName);
-            o.Add (city);
-            o.Add (lat);
-            o.Add (lon);
-            o.Add (isp);
+            o.Add(country);
+            o.Add(regionName);
+            o.Add(city);
+            o.Add(lat);
+            o.Add(lon);
+            o.Add(isp);
 
 
             return info;
@@ -108,50 +110,52 @@ namespace ba_Vofpffs.Controllers
         {
             DateTime dateTime = DateTime.Now;
 
-            string headers = string.Join ("|", Request.Headers.Select (x => String.Format ("{0}={1}", x.Key, x.Value)).ToArray ());
+            string headers = string.Join("|", Request.Headers.Select(x => String.Format("{0}={1}", x.Key, x.Value)).ToArray());
 
             string headerFingerprint = "";
 
-            foreach(var header in Request.Headers)
+            foreach (var header in Request.Headers)
             {
-                if(header.Key == "User-Agent" || header.Key == "Accept-Encoding" || header.Key == "Accept")
+                if (header.Key == "User-Agent" || header.Key == "Accept-Encoding" || header.Key == "Accept")
                 {
-                    headerFingerprint += String.Format ("{0}={1}|", header.Key, header.Value);
+                    headerFingerprint += String.Format("{0}={1}|", header.Key, header.Value);
                 }
             }
 
-            string ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString ();
+            headerFingerprint = CalculateHash(headerFingerprint);
 
-            Dictionary<string, string> geoInfo = GetGeoInfo (ipAddress);
+            string ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
 
-            geoInfo.TryGetValue ("country", out string country);
-            geoInfo.TryGetValue ("regionName", out string regionName);
-            geoInfo.TryGetValue ("city", out string city);
-            geoInfo.TryGetValue ("lat", out string lat);
-            geoInfo.TryGetValue ("lon", out string lon);
-            geoInfo.TryGetValue ("isp", out string isp);
+            Dictionary<string, string> geoInfo = GetGeoInfo(ipAddress);
+
+            geoInfo.TryGetValue("country", out string country);
+            geoInfo.TryGetValue("regionName", out string regionName);
+            geoInfo.TryGetValue("city", out string city);
+            geoInfo.TryGetValue("lat", out string lat);
+            geoInfo.TryGetValue("lon", out string lon);
+            geoInfo.TryGetValue("isp", out string isp);
 
             var files = Request.Form.Files;
 
-            List<FileEntryItem> fileEntrys = new List<FileEntryItem> ();
+            List<FileEntryItem> fileEntrys = new List<FileEntryItem>();
 
-            foreach(var file in files)
+            foreach (var file in files)
             {
                 // full path to file in temp location
-                var filePath = Path.GetTempFileName ();
+                var filePath = Path.GetTempFileName();
 
-                if(file.Length > 0)
+                if (file.Length > 0)
                 {
-                    using(var stream = new FileStream (filePath, FileMode.Create))
+                    using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        file.CopyTo (stream);
+                        file.CopyTo(stream);
                     }
                 }
-                fileEntrys.Add (new FileEntryItem (set, file.FileName, filePath, file.Length, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
+                fileEntrys.Add(new FileEntryItem(set, file.FileName, filePath, file.Length, ipAddress, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
             }
 
-            _context.FileEntryItems.AddRange (fileEntrys);
-            _context.SaveChanges ();
+            _context.FileEntryItems.AddRange(fileEntrys);
+            _context.SaveChanges();
         }
 
         private void ProcessPost(string filename, string ip, int size, string headers, bool setA, bool setB)
@@ -162,53 +166,64 @@ namespace ba_Vofpffs.Controllers
             Dictionary<string, string> headerDictonary;
             string headerFingerprint = "";
 
-            if(headers != null)
+            if (headers != null)
             {
-                keyValuePairs = headers.Split ("|").ToList ();
-                headerDictonary = keyValuePairs.ToDictionary (x => x.Split ("=").FirstOrDefault (), x => x.Split ("=").LastOrDefault ());
+                keyValuePairs = headers.Split("|").ToList();
+                headerDictonary = keyValuePairs.ToDictionary(x => x.Split("=").FirstOrDefault(), x => x.Split("=").LastOrDefault());
 
-                foreach(var header in headerDictonary)
+                foreach (var header in headerDictonary)
                 {
-                    if(header.Key == "User-Agent" || header.Key == "Accept-Encoding" || header.Key == "Accept")
+                    if (header.Key == "User-Agent" || header.Key == "Accept-Encoding" || header.Key == "Accept")
                     {
-                        headerFingerprint += String.Format ("{0}={1}|", header.Key, header.Value);
+                        headerFingerprint += String.Format("{0}={1}|", header.Key, header.Value);
                     }
                 }
+                headerFingerprint = CalculateHash(headerFingerprint);
             }
 
-            if(ip == null)
+            if (ip == null)
             {
-                Random random = new Random ();
+                Random random = new Random();
 
                 ip = "";
-                for(int i = 0; i < 4; i++)
+                for (int i = 0; i < 4; i++)
                 {
-                    ip += random.Next (0, 255);
-                    if(i != 3)
+                    ip += random.Next(0, 255);
+                    if (i != 3)
                         ip += ".";
                 }
             }
 
-            Dictionary<string, string> geoInfo = GetGeoInfo (ip);
+            Dictionary<string, string> geoInfo = GetGeoInfo(ip);
 
-            geoInfo.TryGetValue ("country", out string country);
-            geoInfo.TryGetValue ("regionName", out string regionName);
-            geoInfo.TryGetValue ("city", out string city);
-            geoInfo.TryGetValue ("lat", out string lat);
-            geoInfo.TryGetValue ("lon", out string lon);
-            geoInfo.TryGetValue ("isp", out string isp);
+            geoInfo.TryGetValue("country", out string country);
+            geoInfo.TryGetValue("regionName", out string regionName);
+            geoInfo.TryGetValue("city", out string city);
+            geoInfo.TryGetValue("lat", out string lat);
+            geoInfo.TryGetValue("lon", out string lon);
+            geoInfo.TryGetValue("isp", out string isp);
 
-            if(setA)
+            if (setA)
             {
-                _context.FileEntryItems.Add (new FileEntryItem ("A", filename, null, size, ip, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
+                _context.FileEntryItems.Add(new FileEntryItem("A", filename, null, size, ip, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
             }
 
-            if(setB)
+            if (setB)
             {
-                _context.FileEntryItems.Add (new FileEntryItem ("B", filename, null, size, ip, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
+                _context.FileEntryItems.Add(new FileEntryItem("B", filename, null, size, ip, headers, headerFingerprint, dateTime, country, regionName, city, lat, lon, isp));
             }
 
-            _context.SaveChanges ();
+            _context.SaveChanges();
+        }
+
+        public string CalculateHash(string input)
+        {
+            using (var algorithm = SHA512.Create())
+            {
+                var hashedBytes = algorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+            }
         }
     }
 }
