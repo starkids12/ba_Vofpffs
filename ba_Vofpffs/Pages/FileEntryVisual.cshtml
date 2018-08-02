@@ -15,12 +15,13 @@
 
     <nav id="sidebar" class="sidebar">
         <div id="FileEntryInspector" class="grid-item">
-            <p id="selectedDbSetParagraph">DB Set A</p>
+            <p id="selectedDbSetParagraph">Selected Set: A</p>
 
             <div>
                 <button id="buttonA" class="btn-block btn-primary" onclick="setDbSet(this.id)">A</button>
                 <button id="buttonB" class="btn-block btn-primary" onclick="setDbSet(this.id)">B</button>
-                <select id="propertySelector" class="custom-select" onchange="onSelectChange(this.value)"></select>
+                <select id="visualSelector" class="custom-select" onchange="onVisualChange(this.value)"></select>
+                <select id="propertySelector" class="custom-select" onchange="onPropertyChange(this.value)" style="display: none"></select>
             </div>
 
             <p id="idParagraph">Id :</p>

@@ -3,7 +3,7 @@
     grid-template-columns: 25vw auto;
     grid-auto-rows: 1fr;
     height: 100vh;
-    width: 90vw;
+    width: 99vw;
 }
 
 .grid-item {
@@ -18,7 +18,7 @@
 }
 
 p {
-    padding: 10px;
+    padding: 3px;
 }
 
 .collapsible {

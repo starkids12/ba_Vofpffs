@@ -1,7 +1,10 @@
 ﻿var selectedDbSet = "api/GetA";
-var selectedProperty = "";
 
 var selectedVisualiation = "";
+var selectedProperty = "";
+
+var visualSelector;
+var propertySelector;
 
 var idp;
 var filenamep;
@@ -10,6 +13,10 @@ var ipp;
 var datep;
 var headerl;
 var selectedDbSetp;
+
+var parse = d3.utcParse("%Y-%m-%dT%H:%M:%S.%f");
+var formatTime = d3.utcFormat("%B %d, %Y");
+var color = d3.scaleOrdinal(d3.schemeCategory10);
 
 function initMap() {
 
@@ -31,6 +38,8 @@ $(document).ready(function () {
     ispp = document.getElementById("ispParagraph");
 
     selectedDbSetp = document.getElementById("selectedDbSetParagraph");
+    visualSelector = document.getElementById("visualSelector");
+    propertySelector = document.getElementById("propertySelector");
 
     renderChart();
 });
@@ -40,11 +49,21 @@ $(window).resize(function () {
     renderChart();
 });
 
-function onSelectChange(select) {
+function onVisualChange(select) {
 
     selectedVisualiation = select;
     renderChart();
     resetInspector();
+};
+
+function onPropertyChange(select) {
+    selectedProperty = select;
+    renderChart();
+    resetInspector();
+};
+
+function setPropertySelector(display) {
+    propertySelector.style.display = display;
 }
 
 function renderChart() {
@@ -55,28 +74,29 @@ function renderChart() {
 
         if (selectedVisualiation == "") {
 
-            selectedVisualiation = "treeMap"
-            setSelectorFields();
+            selectedVisualiation = "treeMap";
+            selectedProperty = "id";
+            setSelectorFields(Object.keys(classes[0]));
+            setPropertySelector("block");
         }
 
         if (selectedVisualiation == "treeMap") {
-            drawSvgContent(classes, "ipAddress");
+            drawSvgContent(classes, selectedProperty);
+            setPropertySelector("block");
         }
         else if (selectedVisualiation == "googleMap") {
             drawGoogleMap(classes);
-        }
-        else if (selectedVisualiation == "headerFingerprint") {
-            drawSvgContent(classes, "headerFingerprint");
+            setPropertySelector("none");
         }
         else if (selectedVisualiation == "timeLine") {
             drawTimeLine(classes);
+            setPropertySelector("none");
         }
     });
 };
 
 function drawTimeLine(classes) {
-    var parse = d3.utcParse("%Y-%m-%dT%H:%M:%S.%f");
-    var formatTime = d3.utcFormat("%B %d, %Y");
+  
     
     console.log(classes);
     var date = classes[0].dateTime.slice(0, -1);
@@ -108,22 +128,31 @@ function drawTimeLine(classes) {
         .rangeRound([0, height-200])
         .domain([0, d3.max(nested, function (d) { return d.values.length; })]);
 
-    console.log(nested);
+    var yscale = d3.scaleLinear()
+        .rangeRound([height-200, 0])
+        .domain([0, d3.max(nested, function (d) { return d.values.length; })]);
 
-    var axis = d3.axisBottom(x);
+    console.log(d3.max(nested, function (d) { return d.values.length; }) );
+
+    var axisX = d3.axisBottom(x).ticks(d3.timeMinute.every(2));
+    var axisY = d3.axisLeft(yscale).tickArguments([3, "s"]);
 
     svg.append("g")
         .attr("transform", "translate(100," + height / 1.15 + ")")
-        .call(axis);
+        .call(axisX);
+
+    svg.append("g")
+        .attr("transform", "translate(95," + (height - (height / 1.15) - (100/1.15)) + ")")
+        .call(axisY);
 
     svg.selectAll(".bar")
         .data(nested)
         .enter()
         .append("rect")
         .attr("class", "bar")
-        .attr("x", function (d) { return x(parse(d.key.slice(0, -1))) + 95; })
+        .attr("x", function (d) { return x(parse(d.key.slice(0, -1))) + 98; })
         .attr("y", function (d) { return (height / 1.15) - y(d.values.length); })
-        .attr("width", 10)
+        .attr("width", 4)
         .attr("height", function (d) { return y(d.values.length); })
         .attr("fill", "blue");
 
@@ -139,7 +168,7 @@ function drawTimeLine(classes) {
                 t1 += "Filename: " + element.filename + "\n" +
                     "Filesize: " + element.size + " Byte \n" +
                     "IpAddress: " + element.ipAddress + "\n" +
-                    "Datetime:" + element.dateTime + "\n";
+                    "Datetime:" + parse(element.dateTime.slice(0, -1)) + "\n";
 
                 
             });
@@ -186,8 +215,8 @@ function drawSvgContent(classes, property) {
     var width = canvasElement.clientWidth;
     var height = canvasElement.clientHeight;
 
-    // transition tim ein ms
-    var transitionDuration = 500;
+    // transition time eine s
+    var transitionDuration = 1000;
 
     svg.attr("width", width).attr("height", height);
 
@@ -306,34 +335,45 @@ function drawSvgContent(classes, property) {
         });
 }
 
-function setSelectorFields() {
+function setSelectorFields(keys) {
 
-    var propertySelector = document.getElementById("propertySelector");
+    var index = keys.indexOf("filepath");
+    if (index > -1) {
+        keys.splice(index, 1);
+    }
+    console.log(keys);
+
+    while (visualSelector.firstChild) {
+        visualSelector.removeChild(visualSelector.firstChild);
+    }
 
     while (propertySelector.firstChild) {
         propertySelector.removeChild(propertySelector.firstChild);
     }
 
+    keys.forEach(function (element) {
+        var optK = document.createElement("option")
+        optK.value = element;
+        optK.innerHTML = element;
+
+        propertySelector.appendChild(optK);
+    });
+
     var opt1 = document.createElement("option");
     opt1.value = "treeMap";
-    opt1.innerHTML = "IP Tree Map";
+    opt1.innerHTML = "Tree Map";
 
     var opt2 = document.createElement("option");
     opt2.value = "googleMap";
     opt2.innerHTML = "IP Google Map";
 
     var opt3 = document.createElement("option");
-    opt3.value = "headerFingerprint";
-    opt3.innerHTML = "HeaderFingerprint";
+    opt3.value = "timeLine";
+    opt3.innerHTML = "Time Line";
 
-    var opt4 = document.createElement("option");
-    opt4.value = "timeLine";
-    opt4.innerHTML = "Time Line";
-
-    propertySelector.appendChild(opt1);
-    propertySelector.appendChild(opt2);
-    propertySelector.appendChild(opt3);
-    propertySelector.appendChild(opt4);
+    visualSelector.appendChild(opt1);
+    visualSelector.appendChild(opt2);
+    visualSelector.appendChild(opt3);
 }
 
 function getTextWidth(text, font) {
@@ -385,11 +425,11 @@ function setIncpector(data) {
 function setDbSet(id) {
 
     if (id == "buttonA") {
-        selectedDbSetp.innerText = "DB Set A";
+        selectedDbSetp.innerText = "Selected Set: A";
         selectedDbSet = "api/GetA";
     }
     else if (id == "buttonB") {
-        selectedDbSetp.innerText = "DB Set B";
+        selectedDbSetp.innerText = "Selected Set: B";
         selectedDbSet = "api/GetB";
     }
 
