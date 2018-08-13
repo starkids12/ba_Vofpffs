@@ -1,11 +1,14 @@
 ﻿var selectedDbSet = "api/GetA";
 
+// control the Visualisation
 var selectedVisualiation = "";
 var selectedProperty = "";
 
+// html Elements
 var visualSelector;
 var propertySelector;
 
+// html Elements for displaying FileEntry data
 var idp;
 var filenamep;
 var sizep;
@@ -14,14 +17,17 @@ var datep;
 var headerl;
 var selectedDbSetp;
 
+// 
 var parse = d3.utcParse("%Y-%m-%dT%H:%M:%S.%f");
 var formatTime = d3.utcFormat("%B %d, %Y");
 var color = d3.scaleOrdinal(d3.schemeCategory10);
 
-function initMap() {
 
+function initMap() {
+    //todo: Setting Map Center dynamically
 };
 
+// GEtting the HTML Elements
 $(document).ready(function () {
 
     idp = document.getElementById("idParagraph");
@@ -44,11 +50,13 @@ $(document).ready(function () {
     renderChart();
 });
 
+// New Window Size requires re rendering of the Visualization to fit the screen
 $(window).resize(function () {
 
     renderChart();
 });
 
+// new Visualisation has been selected
 function onVisualChange(select) {
 
     selectedVisualiation = select;
@@ -56,16 +64,19 @@ function onVisualChange(select) {
     resetInspector();
 };
 
+// new Property to display has been selected
 function onPropertyChange(select) {
     selectedProperty = select;
     renderChart();
     resetInspector();
 };
 
+// hide/show the property selector
 function setPropertySelector(display) {
     propertySelector.style.display = display;
 }
 
+// render the Visualisation
 function renderChart() {
 
     d3.json(selectedDbSet, function (error, classes) {
@@ -95,14 +106,10 @@ function renderChart() {
     });
 };
 
+// Render the TimeLine Visualisation
 function drawTimeLine(classes) {
-  
-    
-    console.log(classes);
+
     var date = classes[0].dateTime.slice(0, -1);
-    console.log(date);
-    console.log(parse(date));
-    console.log(formatTime(parse(date)));
 
     var canvasElement = document.getElementById("FileEntryChart");
     while (canvasElement.firstChild) {
@@ -132,9 +139,9 @@ function drawTimeLine(classes) {
         .rangeRound([height-200, 0])
         .domain([0, d3.max(nested, function (d) { return d.values.length; })]);
 
-    console.log(d3.max(nested, function (d) { return d.values.length; }) );
+    //console.log(d3.max(nested, function (d) { return d.values.length; }) );
 
-    var axisX = d3.axisBottom(x).ticks(d3.timeMinute.every(2));
+    var axisX = d3.axisBottom(x);//.ticks(d3.timeMinute.every(2));
     var axisY = d3.axisLeft(yscale).tickArguments([3, "s"]);
 
     svg.append("g")
@@ -142,7 +149,7 @@ function drawTimeLine(classes) {
         .call(axisX);
 
     svg.append("g")
-        .attr("transform", "translate(95," + (height - (height / 1.15) - (100/1.15)) + ")")
+        .attr("transform", "translate(95," + (height - (height / 1.15) - ((100/1.15) - 115)) + ")")
         .call(axisY);
 
     svg.selectAll(".bar")
@@ -177,6 +184,7 @@ function drawTimeLine(classes) {
         });
 }
 
+// Render The google Map Visualisation
 function drawGoogleMap(classes) {
 
     var canvasElement = document.getElementById("FileEntryChart");
@@ -203,6 +211,7 @@ function drawGoogleMap(classes) {
     });
 }
 
+// render Treemap
 function drawSvgContent(classes, property) {
 
     // ugly Code
@@ -335,13 +344,14 @@ function drawSvgContent(classes, property) {
         });
 }
 
+// set the propertys to select from
 function setSelectorFields(keys) {
 
+    // remove the filepath 
     var index = keys.indexOf("filepath");
     if (index > -1) {
         keys.splice(index, 1);
     }
-    console.log(keys);
 
     while (visualSelector.firstChild) {
         visualSelector.removeChild(visualSelector.firstChild);
@@ -376,6 +386,7 @@ function setSelectorFields(keys) {
     visualSelector.appendChild(opt3);
 }
 
+// get Textwidth of an Element
 function getTextWidth(text, font) {
     // if given, use cached canvas for better performance
     // else, create new canvas
@@ -386,6 +397,7 @@ function getTextWidth(text, font) {
     return metrics.width;
 };
 
+// reset the HeaderList of reuse
 function resetHeaderList() {
 
     while (headerl.firstChild) {
@@ -393,6 +405,7 @@ function resetHeaderList() {
     }
 };
 
+// Set Data to display for a selected FileEntry
 function setIncpector(data) {
 
     resetHeaderList();
@@ -422,6 +435,7 @@ function setIncpector(data) {
     });
 };
 
+// Set the displayed DBSet
 function setDbSet(id) {
 
     if (id == "buttonA") {
@@ -437,6 +451,7 @@ function setDbSet(id) {
     renderChart();
 };
 
+// reset the Inspector for reuse
 function resetInspector() {
 
     resetHeaderList();
@@ -454,6 +469,7 @@ function resetInspector() {
     ispp.innerText = "ISP : ";
 };
 
+// get Lat Lon for grouping
 function getAllLatLon(classes) {
 
     var nested = d3.nest()

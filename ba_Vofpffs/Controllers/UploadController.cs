@@ -30,6 +30,17 @@ namespace ba_Vofpffs.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/getFile")]
+        public FileResult GetFile(string filename) {
+
+            var entry = _context.FileEntryItems.Where(x => x.Filename == filename).ToList().FirstOrDefault();
+            if (entry?.Filepath != null)
+                return File(System.IO.File.ReadAllBytes(entry.Filepath), System.Net.Mime.MediaTypeNames.Application.Octet, entry.Filename);
+            else 
+                return null;
+        } 
+
         // GET api/upload
         [HttpGet]
         [Route("api/GetA")]
@@ -65,7 +76,10 @@ namespace ba_Vofpffs.Controllers
             ProcessPost(filename, ip, size, header, setA, setB);
             return RedirectToPage("/FileEntry");
         }
-
+        /*
+        Get the Geo Information from http://ip-api.com/json/
+        return Geo Info as Dictonary of <string, string>
+         */
         private Dictionary<string, string> GetGeoInfo(string ip)
         {
 
@@ -106,6 +120,10 @@ namespace ba_Vofpffs.Controllers
             return info;
         }
 
+/*
+For a Post collect alle Transport- and Metadata for a file, 
+save the file to temp and store filepath and collected Data.
+ */
         private void ProcessPost(HttpRequest request, string set)
         {
             DateTime dateTime = DateTime.Now;
@@ -218,7 +236,7 @@ namespace ba_Vofpffs.Controllers
 
         public string CalculateHash(string input)
         {
-            using (var algorithm = SHA512.Create())
+            using (var algorithm = MD5.Create())
             {
                 var hashedBytes = algorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
 
